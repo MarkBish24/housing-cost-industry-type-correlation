@@ -1,0 +1,64 @@
+id,Industry
+IN01,Civilian Labor Force
+IN02,Civilian Employment
+IN03,Civilian Unemployment
+IN04,Total Farm
+IN05,Total Nonfarm
+IN06,Goods Producing
+IN07,Government
+IN08,Federal Government
+IN09,State Government
+IN10,Local Government
+IN11,Private Education and Health Services
+IN12,Leisure and Hospitality
+IN13,Manufacturing
+IN14,Financial Activities
+IN15,Retail Trade
+IN16,"Transportation, Warehousing, and Utilities"
+IN17,Professional and Business Services
+IN18,Wholesale Trade
+IN19,Information
+IN20,Other Services
+IN21,"Total, All Industries"
+IN22,Total Private
+IN23,Service-Providing
+IN24,Private Service Providing
+IN25,"Mining, Logging and Construction"
+IN26,Durable Goods
+IN27,"Trade, Transportation, and Utilities"
+IN28,Total State and Local Government
+IN29,Mining and Logging
+IN30,Construction
+IN31,Non-Durable Goods
+IN32,Special Districts plus Tribes
+IN33,Administrative and Support and Waste and Remediatio
+IN34,"Trade, Transportation & Utilities"
+IN35,"Arts, Entertainment, and Recreation"
+IN36,Service Providing
+IN37,Private Educational Services
+IN38,Accommodation and Food Services
+IN39,State Government Educational Services
+IN40,State Government Excluding Education
+IN41,Finance and Insurance
+IN42,County Government
+IN43,City Government
+IN44,Local Government Educational Services
+IN45,Local Government excluding Educational Services
+IN46,Health Care and Social Assistance
+IN47,Nondurable Goods
+IN48,Finance & Insurance
+IN49,Real Estate & Rental & Leasing
+IN50,"Professional, Scientific & Technical Services"
+IN51,Management of Companies & Enterprises
+IN52,Food Services and Drinking Places
+IN53,Accommodation & Food Services
+IN54,Food and Beverage Retailers
+IN55,"Mining, Logging, and Construction"
+IN56,Real Estate and Rental and Leasing
+IN57,General Merchandise Retailers
+IN58,"Clothing, Clothing Accessories, Shoe, and Jewelry"
+IN59,Health Care & Social Assistance
+IN60,State & Local Government
+IN61,"Professional, Scientific, and Technical Services"
+IN62,Management of Companies and Enterprises
+IN63,Department of Defense
