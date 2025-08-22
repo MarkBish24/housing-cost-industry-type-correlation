@@ -2,14 +2,20 @@
   "name": "electron",
   "version": "1.0.0",
   "main": "main.js",
+  "type": "module",
   "scripts": {
-    "dev": "electron ."
+    "dev": "nodemon --exec electron main.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "electron": "^37.3.1"
+    "electron": "^37.3.1",
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "pg": "^8.16.3"
   }
 }
