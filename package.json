@@ -1,0 +1,24 @@
+{
+  "name": "housing-cost-industry-type-correlation",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix electron\"",
+    "build": "npm run build --prefix frontend && npm run build --prefix electron"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarkBish24/housing-cost-industry-type-correlation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarkBish24/housing-cost-industry-type-correlation/issues"
+  },
+  "homepage": "https://github.com/MarkBish24/housing-cost-industry-type-correlation#readme",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "cross-env": "^10.0.0"
+  }
+}
