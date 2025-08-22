@@ -8,13 +8,15 @@ dotenv.config();
 // DB_DATABASE
 // DB_PASSWORD
 
+// hidden passwords for the dotenv to hide
 const DB_USER = process.env.DB_USER;
 const DB_HOST = process.env.DB_HOST;
 const DB_DATABASE = process.env.DB_DATABASE;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_PORT = process.env.DB_PORT;
 
-const client = new Client({
+// creates a new client to connect to the data base
+export const client = new Client({
   user: DB_USER,
   host: DB_HOST,
   database: DB_DATABASE,
@@ -22,6 +24,7 @@ const client = new Client({
   port: DB_PORT,
 });
 
+// function to connect to the client
 export async function connectDB() {
   try {
     await client.connect();
