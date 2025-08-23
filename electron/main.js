@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./db.js";
-import * as dbUtils from "./dbUtils.js";
+import { getAllUsers, getViewData } from "./dbUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,4 +38,12 @@ app.whenReady().then(async () => {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+ipcMain.handle("db:getAllUsers", async (_, table) => {
+  return await getAllUsers(table);
+});
+
+ipcMain.handle("db:getViewData", async (_, view) => {
+  return await getViewData(view);
 });
