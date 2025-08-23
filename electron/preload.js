@@ -1,6 +1,6 @@
-import { contextBridge, ipcRenderer } from "electron";
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("API", {
-  getUsers: async (table) => ipcRenderer.invoke("db:getAllUsers"),
-  getView: async (view) => ipcRenderer.invoke("db:getView"),
+  getAllUsers: async (table) => ipcRenderer.invoke("db:getAllUsers", table),
+  getViewData: async (view) => ipcRenderer.invoke("db:getViewData", view),
 });
