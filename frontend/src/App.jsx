@@ -18,7 +18,7 @@ function App() {
 
   return (
     <>
-      <h1>Hello There</h1>
+      <h1 className="text-4xl font-bold text-blue-600 my-4">Hello There</h1>
     </>
   );
 }
