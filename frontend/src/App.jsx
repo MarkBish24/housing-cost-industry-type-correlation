@@ -1,25 +1,18 @@
 import { useState, useEffect } from "react";
+import Header from "./components/Header";
 
 function App() {
-  const [counties, setCounties] = useState([]);
-
-  useEffect(() => {
-    const fetchCountyData = async () => {
-      try {
-        const countyData = await window.API.getAllUsers("county");
-        setCounties(countyData);
-        console.log(countyData);
-      } catch (err) {
-        console.error("Error fetching counties:", err);
-      }
-    };
-    fetchCountyData();
-  }, []);
-
+  const [industryMode, setIndustryMode] = useState("");
+  const [mode, setMode] = useState("cost");
   return (
-    <>
-      <h1 className="text-4xl font-bold text-blue-600 my-4">Hello There</h1>
-    </>
+    <div data-theme="retro">
+      <Header
+        industryMode={industryMode}
+        setIndustryMode={setIndustryMode}
+        mode={mode}
+        setMode={setMode}
+      />
+    </div>
   );
 }
 
