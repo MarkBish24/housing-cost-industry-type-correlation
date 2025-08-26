@@ -1,12 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import * as d3 from "d3";
 
-export default function CountyMap({ geoData }) {
+export default function CountyMap({ geoData, year, mode, industryMode }) {
   const svgRef = useRef();
+
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     if (!geoData) return;
+
+    async function fetchData() {
+      try {
+        const result = await window.API.getViewDataWithFilter(
+          "housing_view",
+          "year",
+          year
+        );
+        setData(result);
+      } catch (err) {
+        console.log("Data Pulling Error", err);
+      }
+    }
+    fetchData();
+
+    const dataMap = {};
+    data.forEach((row) => {});
 
     const width = 500;
     const height = 450;
@@ -53,7 +72,7 @@ export default function CountyMap({ geoData }) {
             `translate(${translate[0]},${translate[1]}) scale(${scale})`
           );
       });
-  }, [geoData]);
+  }, [geoData, year]);
 
   return (
     <div className="relative w-[500px] h-[450px]">
@@ -66,9 +85,9 @@ export default function CountyMap({ geoData }) {
             .duration(750)
             .attr("transform", "translate(0,0) scale(1)");
         }}
-        className="absolute top-2 right-2 z-10 btn bg-primary text-white px-3 py-1 text-sm"
+        className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
       >
-        <ZoomOut />
+        <ZoomOut size={16} />
       </button>
     </div>
   );

@@ -47,3 +47,7 @@ ipcMain.handle("db:getAllUsers", async (_, table) => {
 ipcMain.handle("db:getViewData", async (_, view) => {
   return await getViewData(view);
 });
+
+ipcMain.handle("db:getViewDataWithFilter", async (_, view, column, value) => {
+  return await getViewDataWithFilter(view, column, value);
+});

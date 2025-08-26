@@ -25,7 +25,12 @@ function App() {
         year={year}
         setYear={setYear}
       />
-      <CountyMap geoData={geoData} />
+      <CountyMap
+        geoData={geoData}
+        year={year}
+        mode={mode}
+        industryMode={industryMode}
+      />
     </div>
   );
 }
