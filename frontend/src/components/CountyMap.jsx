@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { ZoomIn, ZoomOut } from "lucide-react";
 import * as d3 from "d3";
 
 export default function CountyMap({ geoData }) {
@@ -54,5 +55,21 @@ export default function CountyMap({ geoData }) {
       });
   }, [geoData]);
 
-  return <svg ref={svgRef} width={500} height={450}></svg>;
+  return (
+    <div className="relative w-[500px] h-[450px]">
+      <svg ref={svgRef} width={500} height={450}></svg>
+      <button
+        onClick={() => {
+          d3.select(svgRef.current)
+            .select("g")
+            .transition()
+            .duration(750)
+            .attr("transform", "translate(0,0) scale(1)");
+        }}
+        className="absolute top-2 right-2 z-10 btn bg-primary text-white px-3 py-1 text-sm"
+      >
+        <ZoomOut />
+      </button>
+    </div>
+  );
 }
