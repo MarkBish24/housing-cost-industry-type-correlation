@@ -34,7 +34,7 @@ export default function Header({
   const activeButton = "btn bg-primary text-base-100 px-8 py-4 rounded-md";
 
   return (
-    <header className="w-full bg-base-100 shadow-md fixed top-0 left-0 z-50 h-24 ">
+    <header className="w-full bg-base-100/75 backdrop-blur-md shadow-md fixed top-0 left-0 z-50 h-24 ">
       <div className="h-full flex flex-row justify-between items-center px-16">
         <div className="flex flex-row space-x-3 mx-8">
           <button
