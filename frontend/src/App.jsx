@@ -4,6 +4,7 @@ import Header from "./components/Header";
 function App() {
   const [industryMode, setIndustryMode] = useState("");
   const [mode, setMode] = useState("cost");
+  const [year, setYear] = useState(2010);
   return (
     <div data-theme="autumn" className="bg-white min-h-screen">
       <Header
@@ -11,6 +12,8 @@ function App() {
         setIndustryMode={setIndustryMode}
         mode={mode}
         setMode={setMode}
+        year={year}
+        setYear={setYear}
       />
     </div>
   );

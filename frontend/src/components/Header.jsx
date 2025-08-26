@@ -7,6 +7,8 @@ export default function Header({
   setIndustryMode,
   mode,
   setMode,
+  year,
+  setYear,
 }) {
   const [industries, setIndustries] = useState([]);
 
@@ -27,19 +29,45 @@ export default function Header({
     console.log("Selected industry:", industry);
   }
 
+  const inactiveButton =
+    "btn bg-white hover:bg-primary hover:text-base-100 px-8 py-4 rounded-md";
+  const activeButton = "btn bg-primary text-base-100 px-8 py-4 rounded-md";
+
   return (
     <header className="w-full bg-base-100 shadow-md fixed top-0 left-0 z-50 h-24 ">
       <div className="h-full flex flex-row justify-between items-center px-16">
         <div className="flex flex-row space-x-3 mx-8">
-          <button className=" btn bg-white hover:bg-primary hover:text-base-100 px-8 py-4 rounded-md">
+          <button
+            className={mode === "cost" ? activeButton : inactiveButton}
+            onClick={() => setMode("cost")}
+          >
             HOUSING COST
           </button>
-          <button className="btn bg-white hover:bg-primary hover:text-base-100 px-8 py-4 rounded-md">
+          <button
+            className={mode === "industry" ? activeButton : inactiveButton}
+            onClick={() => setMode("industry")}
+          >
             INDUSTRY
           </button>
         </div>
 
-        <div className="dropdown w-52">
+        <div className="w-1/3 flex flex-col items-center space-y-4">
+          <label className="text-xl font-semibold">{year}</label>
+          <input
+            type="range"
+            min={2010}
+            max={2024}
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className="range range-primary w-3/4"
+          />
+        </div>
+
+        <div
+          className={`dropdown w-52 ${
+            mode === "cost" ? "pointer-events-none opacity-50" : ""
+          }`}
+        >
           <button
             tabIndex={0}
             role="button"
