@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
+import { formatPrice } from "../utils/format";
 import * as d3 from "d3";
 
 export default function CountyMap({ geoData, year, mode, industryMode }) {
@@ -44,6 +45,17 @@ export default function CountyMap({ geoData, year, mode, industryMode }) {
     const projection = d3.geoMercator().fitSize([width, height], geoData);
     const path = d3.geoPath().projection(projection);
 
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("padding", "4px 8px")
+      .style("border", "1px solid #ccc")
+      .style("border-radius", "4px")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
     g.selectAll("path")
       .data(mergedData.features)
       .enter()
@@ -60,9 +72,21 @@ export default function CountyMap({ geoData, year, mode, industryMode }) {
       // set up attributes for each county
       .on("mouseover", function (event, d) {
         d3.select(this).transition().duration(100).attr("opacity", 1);
+
+        tooltip.style("opacity", 1).html(
+          `<strong>${d.properties.CountyName}</strong><br/>
+         Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
+         Year : ${d.properties.year}`
+        );
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("left", event.pageX + 10 + "px")
+          .style("top", event.pageY + 10 + "px");
       })
       .on("mouseout", function () {
         d3.select(this).transition().duration(100).attr("opacity", 0.5);
+        tooltip.style("opacity", 0);
       })
       .on("click", function (event, d) {
         const [[x0, y0], [x1, y1]] = path.bounds(d);
