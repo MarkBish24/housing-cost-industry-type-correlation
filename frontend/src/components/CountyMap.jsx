@@ -4,9 +4,9 @@ import * as d3 from "d3";
 
 export default function CountyMap({ geoData, year, mode, industryMode }) {
   const svgRef = useRef();
-
   const [data, setData] = useState([]);
 
+  //fetching all the SQL info data and putting it into data state
   useEffect(() => {
     if (!geoData) return;
 
@@ -18,14 +18,19 @@ export default function CountyMap({ geoData, year, mode, industryMode }) {
           year
         );
         setData(result);
+        console.log(result);
       } catch (err) {
         console.log("Data Pulling Error", err);
       }
     }
     fetchData();
 
-    const dataMap = {};
-    data.forEach((row) => {});
+    // Collect and merge the geo and county data
+
+    const mergedData = mergeGeoData(geoData, data);
+    console.log(mergedData);
+
+    // Setting up map
 
     const width = 500;
     const height = 450;
@@ -40,16 +45,20 @@ export default function CountyMap({ geoData, year, mode, industryMode }) {
     const path = d3.geoPath().projection(projection);
 
     g.selectAll("path")
-      .data(geoData.features)
+      .data(mergedData.features)
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "lightgray")
+      .attr("fill", (d) => {
+        const value = d.properties.housing_cost;
+        return value ? d3.interpolateBlues(value / 1000000) : "lightgray";
+      })
       .attr("stroke", "#333")
       .attr("stroke-width", 0.5)
       .attr("opacity", 0.5)
       .style("cursor", "pointer")
-      .on("mouseover", function () {
+      // set up attributes for each county
+      .on("mouseover", function (event, d) {
         d3.select(this).transition().duration(100).attr("opacity", 1);
       })
       .on("mouseout", function () {
@@ -91,4 +100,24 @@ export default function CountyMap({ geoData, year, mode, industryMode }) {
       </button>
     </div>
   );
+}
+
+function mergeGeoData(geoData, countyData) {
+  return {
+    ...geoData,
+    features: geoData.features.map((feature) => {
+      const countyName = feature.properties.CountyName;
+      const match = countyData.find(
+        (d) => d.county_name.toLowerCase() === countyName.toLowerCase()
+      );
+
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          ...(match || {}),
+        },
+      };
+    }),
+  };
 }

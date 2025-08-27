@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./db.js";
-import { getAllUsers, getViewData } from "./dbUtils.js";
+import { getAllUsers, getViewData, getViewDataWithFilter } from "./dbUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
