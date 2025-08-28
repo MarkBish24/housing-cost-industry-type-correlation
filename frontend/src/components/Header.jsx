@@ -10,19 +10,23 @@ export default function Header({
   year,
   setYear,
 }) {
-  const [industries, setIndustries] = useState([]);
+  const [industryTitles, setIndustryTitles] = useState([]);
+
+  //Used only to get the titles of the Industry data, doesn't actually have any data associated with it
 
   useEffect(() => {
     async function getIndustryData() {
       try {
         const industryData = await window.API.getAllUsers("industry");
-        setIndustries(industryData);
+        setIndustryTitles(industryData);
       } catch (err) {
         console.log("Error collecting Industry data: ", err);
       }
     }
     getIndustryData();
   }, []);
+
+  // Changes the industryMode/ type of industry for example (Total Farm)
 
   function handleClick(industry) {
     setIndustryMode(industry);
@@ -35,6 +39,7 @@ export default function Header({
 
   return (
     <header className="w-full bg-base-100/75 backdrop-blur-md shadow-md fixed top-0 left-0 z-50 h-24 ">
+      {/* Button that switches from house mode to industry mode */}
       <div className="h-full flex flex-row justify-between items-center px-16">
         <div className="flex flex-row space-x-3 mx-8">
           <button
@@ -51,6 +56,8 @@ export default function Header({
           </button>
         </div>
 
+        {/* Set's a Year slider to change the years */}
+
         <div className="w-1/3 flex flex-col items-center space-y-4">
           <label className="text-xl font-semibold">{year}</label>
           <input
@@ -62,6 +69,8 @@ export default function Header({
             className="range range-primary w-3/4"
           />
         </div>
+
+        {/* Drop down menu to change the industry type from a list of options */}
 
         <div
           className={`dropdown w-52 ${
@@ -79,7 +88,7 @@ export default function Header({
             tabIndex={0}
             className="dropdown-content menu bg-base-100 z-[1] w-52 p-2 shadow max-h-100"
           >
-            {industries.map((item, index) => (
+            {industryTitles.map((item, index) => (
               <li
                 key={item.industry_id}
                 className="text-secondary hover:text-primary p-2"
