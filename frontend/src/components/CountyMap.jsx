@@ -13,6 +13,9 @@ export default function CountyMap({
   housingData,
   industryWorkersData,
 }) {
+  // for maintaining the zoom state when the year changes
+  const [zoomState, setZoomState] = useState({ scale: 1, translate: [0, 0] });
+
   const svgRef = useRef();
 
   const filteredData = useMemo(() => {
@@ -58,7 +61,12 @@ export default function CountyMap({
     svg.selectAll("*").remove();
 
     // Add a group to hold all counties (for zooming)
-    const g = svg.append("g");
+    const g = svg
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${zoomState.translate[0]}, ${zoomState.translate[1]}) scale(${zoomState.scale})`
+      );
 
     const projection = d3.geoMercator().fitSize([width, height], geoData);
     const path = d3.geoPath().projection(projection);
@@ -122,6 +130,7 @@ export default function CountyMap({
             "transform",
             `translate(${translate[0]},${translate[1]}) scale(${scale})`
           );
+        setZoomState({ scale, translate });
       });
   }, [geoData, year]);
   if (!mergedData) return <Loading width={width} height={height} />;
@@ -136,6 +145,7 @@ export default function CountyMap({
               .transition()
               .duration(750)
               .attr("transform", "translate(0,0) scale(1)");
+            setZoomState({ scale: 1, translate: [0, 0] });
           }}
           className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
         >
