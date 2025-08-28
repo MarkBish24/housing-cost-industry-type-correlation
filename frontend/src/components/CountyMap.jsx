@@ -1,35 +1,51 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import * as d3 from "d3";
 
-export default function CountyMap({ geoData, year, mode, industryMode }) {
+export default function CountyMap({
+  geoData,
+  year,
+  mode,
+  industryMode,
+  housingData,
+  industryWorkersData,
+}) {
   const svgRef = useRef();
-  const [data, setData] = useState([]);
+
+  const filteredData = useMemo(() => {
+    if (!housingData) return [];
+    return housingData.filter((d) => Number(d.year) === Number(year));
+  }, [housingData, year]);
+
+  // Pulling the housing and geo data from the app and combining them
+  const mergedData = useMemo(() => {
+    if (!geoData || !filteredData) return null;
+
+    console.log(filteredData);
+
+    return {
+      ...geoData,
+      features: geoData.features.map((feature) => {
+        const countyName = feature.properties.CountyName;
+        const match = filteredData.find(
+          (d) => d.county_name.toLowerCase() === countyName.toLowerCase()
+        );
+
+        return {
+          ...feature,
+          properties: {
+            ...feature.properties,
+            ...(match || {}),
+          },
+        };
+      }),
+    };
+  });
 
   //fetching all the SQL info data and putting it into data state
   useEffect(() => {
-    if (!geoData) return;
-
-    async function fetchData() {
-      try {
-        const result = await window.API.getViewDataWithFilter(
-          "housing_view",
-          "year",
-          year
-        );
-        setData(result);
-        console.log(result);
-      } catch (err) {
-        console.log("Data Pulling Error", err);
-      }
-    }
-    fetchData();
-
-    // Collect and merge the geo and county data
-
-    const mergedData = mergeGeoData(geoData, data);
-    console.log(mergedData);
+    if (!mergedData) return;
 
     // Setting up map
 
@@ -106,42 +122,23 @@ export default function CountyMap({ geoData, year, mode, industryMode }) {
           );
       });
   }, [geoData, year]);
-
-  return (
-    <div className="relative w-[500px] h-[450px]">
-      <svg ref={svgRef} width={500} height={450}></svg>
-      <button
-        onClick={() => {
-          d3.select(svgRef.current)
-            .select("g")
-            .transition()
-            .duration(750)
-            .attr("transform", "translate(0,0) scale(1)");
-        }}
-        className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
-      >
-        <ZoomOut size={16} />
-      </button>
-    </div>
-  );
-}
-
-function mergeGeoData(geoData, countyData) {
-  return {
-    ...geoData,
-    features: geoData.features.map((feature) => {
-      const countyName = feature.properties.CountyName;
-      const match = countyData.find(
-        (d) => d.county_name.toLowerCase() === countyName.toLowerCase()
-      );
-
-      return {
-        ...feature,
-        properties: {
-          ...feature.properties,
-          ...(match || {}),
-        },
-      };
-    }),
-  };
+  if (!mergedData) return <div>Loading Map...</div>;
+  else
+    return (
+      <div className="relative w-[500px] h-[450px]">
+        <svg ref={svgRef} width={500} height={450}></svg>
+        <button
+          onClick={() => {
+            d3.select(svgRef.current)
+              .select("g")
+              .transition()
+              .duration(750)
+              .attr("transform", "translate(0,0) scale(1)");
+          }}
+          className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
+        >
+          <ZoomOut size={16} />
+        </button>
+      </div>
+    );
 }
