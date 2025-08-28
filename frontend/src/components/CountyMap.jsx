@@ -3,6 +3,8 @@ import { ZoomIn, ZoomOut } from "lucide-react";
 import { formatPrice } from "../utils/format";
 import * as d3 from "d3";
 
+import Loading from "./LoadingScreen";
+
 export default function CountyMap({
   geoData,
   year,
@@ -43,14 +45,14 @@ export default function CountyMap({
     };
   });
 
+  const width = 500;
+  const height = 450;
+
   //fetching all the SQL info data and putting it into data state
   useEffect(() => {
     if (!mergedData) return;
 
     // Setting up map
-
-    const width = 500;
-    const height = 450;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -122,7 +124,7 @@ export default function CountyMap({
           );
       });
   }, [geoData, year]);
-  if (!mergedData) return <div>Loading Map...</div>;
+  if (!mergedData) return <Loading width={width} height={height} />;
   else
     return (
       <div className="relative w-[500px] h-[450px]">
