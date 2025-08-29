@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import CountyMap from "./components/CountyMap";
+import MultiLineChart from "./components/MultiLineChart";
 
 function App() {
   // Selections for filtering data
@@ -8,7 +9,7 @@ function App() {
   const [industryMode, setIndustryMode] = useState("");
   const [mode, setMode] = useState("cost");
   const [year, setYear] = useState("2010");
-  const [county, setCounty] = useState("");
+  const [highlightedCounty, setHighlightedCounty] = useState(null);
 
   // Data
 
@@ -62,6 +63,13 @@ function App() {
         industryMode={industryMode}
         housingData={housingData}
         industryWorkersData={industryWorkersData}
+        highlightedCounty={highlightedCounty}
+        setHighlightedCounty={setHighlightedCounty}
+      />
+      <MultiLineChart
+        industryHousingData={industryHousingData}
+        county={highlightedCounty}
+        industryMode={industryMode}
       />
     </div>
   );

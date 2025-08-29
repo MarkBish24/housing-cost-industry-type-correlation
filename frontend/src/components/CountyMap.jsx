@@ -12,10 +12,11 @@ export default function CountyMap({
   mode,
   industryMode,
   industryWorkersData,
+  highlightedCounty,
+  setHighlightedCounty,
 }) {
   const [zoomState, setZoomState] = useState({ scale: 1, translate: [0, 0] });
   const [isFixed, setIsFixed] = useState(false);
-  const [highlightedCounty, setHighlightedCounty] = useState(null);
   const [toolTipData, setToolTipData] = useState(null);
 
   const svgRef = useRef();
