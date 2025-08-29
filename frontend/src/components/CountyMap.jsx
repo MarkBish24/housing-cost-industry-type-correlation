@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
-import { formatPrice } from "../utils/format";
 import * as d3 from "d3";
 
+import { formatPrice, interpolatedHousingColorScale } from "../utils/format";
 import Loading from "./LoadingScreen";
 
 export default function CountyMap({
@@ -56,9 +56,11 @@ export default function CountyMap({
     if (!mergedData) return;
 
     // Setting up map
-
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
+
+    // creating a legend
+    d3.select("#legend");
 
     // Add a group to hold all counties (for zooming)
     const g = svg
@@ -80,6 +82,8 @@ export default function CountyMap({
       .style("border-radius", "4px")
       .style("pointer-events", "none")
       .style("opacity", 0);
+
+    // sets a tool tip object at the start of the creation of the map
 
     if (isFixed && highlightedCounty !== null) {
       const countyData = mergedData.features.find(
@@ -109,12 +113,12 @@ export default function CountyMap({
       .attr("d", path)
       .attr("fill", (d) => {
         const value = d.properties.housing_cost;
-        return value ? d3.interpolateBlues(value / 1000000) : "lightgray";
+        return value ? interpolatedHousingColorScale(value) : "lightgray";
       })
       .attr("stroke", "#333")
-      .attr("stroke-width", 0.5)
+      .attr("stroke-width", 0.75)
       .attr("opacity", (d) =>
-        d.properties.county_name === highlightedCounty ? 1 : 0.5
+        d.properties.county_name === highlightedCounty ? 1 : 0.75
       )
       .style("cursor", "pointer")
       // set up attributes for each county
@@ -144,7 +148,7 @@ export default function CountyMap({
         }
       })
       .on("mouseout", function () {
-        d3.select(this).transition().duration(100).attr("opacity", 0.5);
+        d3.select(this).transition().duration(100).attr("opacity", 0.75);
         if (!isFixed) {
           tooltip.style("opacity", 0);
         }
@@ -176,8 +180,8 @@ export default function CountyMap({
             tooltip
               .style("opacity", 1)
               .style("left", "20px")
-              .style("bottom", "20px")
-              .style("top", "auto")
+              .style("top", "20px")
+              .style("bottom", "auto")
               .style("right", "auto").html(`
       <strong>${d.properties.CountyName}</strong><br/>
       Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
@@ -186,7 +190,7 @@ export default function CountyMap({
     `);
           });
       });
-  }, [geoData, year, isFixed]);
+  }, [mergedData, isFixed]);
   if (!mergedData) return <Loading width={width} height={height} />;
   else
     return (
@@ -198,6 +202,39 @@ export default function CountyMap({
           className="absolute bg-white border rounded-md shadow px-2 py-1 text-sm"
           style={{ opacity: 0 }}
         />
+
+        <div
+          id="legend"
+          className="absolute bottom-2 left-2 w-[220px] bg-white border rounded-md shadow p-3"
+        >
+          {/* Gradient */}
+          <div
+            className="h-6 w-full rounded relative"
+            style={{
+              background:
+                "linear-gradient(to right, #006400 0%,#a6d96a 8%,#ffff66 21%,#fdae61 34%,#d7191c 47%,#4B0000 73%,#000000 100%)",
+            }}
+          ></div>
+
+          {/* Labels */}
+          <div className="relative w-full h-6 mt-2">
+            <span className="absolute text-xs left-[0%] -translate-x-1/2">
+              100k
+            </span>
+            <span className="absolute text-xs left-[17%] -translate-x-1/2">
+              500k
+            </span>
+            <span className="absolute text-xs left-[47%] -translate-x-1/2">
+              1M
+            </span>
+            <span className="absolute text-xs left-[73%] -translate-x-1/2">
+              1.5M
+            </span>
+            <span className="absolute text-xs left-[100%] -translate-x-1/2">
+              2M
+            </span>
+          </div>
+        </div>
 
         <button
           onClick={() => {
