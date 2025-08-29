@@ -17,6 +17,8 @@ export default function CountyMap({
   const [zoomState, setZoomState] = useState({ scale: 1, translate: [0, 0] });
   const [isFixed, setIsFixed] = useState(false);
   const [highlightedCounty, setHighlightedCounty] = useState(null);
+  const [toolTipData, setToolTipData] = useState(null);
+  const toolTipRef = useRef(null);
 
   const svgRef = useRef();
 
@@ -51,110 +53,109 @@ export default function CountyMap({
   const width = 500;
   const height = 450;
 
+  const toLocal = (event) => {
+    const rect = svgRef.current.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left + 15,
+      y: event.clientY - rect.top + 20,
+    };
+  };
+
   //fetching all the SQL info data and putting it into data state
   useEffect(() => {
     if (!mergedData) return;
 
-    // Setting up map
+    // Setting up SVG and group
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-
-    // creating a legend
-    d3.select("#legend");
-
-    // Add a group to hold all counties (for zooming)
-    const g = svg
-      .append("g")
-      .attr(
+    let g = svg.select("g#counties");
+    if (g.empty()) {
+      g = svg
+        .append("g")
+        .attr("id", "counties") // give it an ID so we can select it later
+        .attr(
+          "transform",
+          `translate(${zoomState.translate[0]}, ${zoomState.translate[1]}) scale(${zoomState.scale})`
+        );
+    } else {
+      g.attr(
         "transform",
         `translate(${zoomState.translate[0]}, ${zoomState.translate[1]}) scale(${zoomState.scale})`
       );
+    }
 
+    // projection and path generator
     const projection = d3.geoMercator().fitSize([width, height], geoData);
     const path = d3.geoPath().projection(projection);
 
-    const tooltip = d3
-      .select("#tooltip")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("padding", "4px 8px")
-      .style("border", "1px solid #ccc")
-      .style("border-radius", "4px")
-      .style("pointer-events", "none")
-      .style("opacity", 0);
-
     // sets a tool tip object at the start of the creation of the map
 
-    if (isFixed && highlightedCounty !== null) {
-      const countyData = mergedData.features.find(
-        (feature) => feature.properties.county_name === highlightedCounty
-      );
-
-      if (countyData) {
-        tooltip
-          .style("opacity", 1)
-          .style("left", "20px")
-          .style("bottom", "20px")
-          .style("top", "auto")
-          .style("right", "auto").html(`
-        <strong>${countyData.properties.CountyName}</strong><br/>
-        Housing Cost: ${
-          formatPrice(countyData.properties.housing_cost) || "N/A"
-        }<br/>
-        Year: ${countyData.properties.year}
-      `);
-      }
-    }
-
     g.selectAll("path")
-      .data(mergedData.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("fill", (d) => {
-        const value = d.properties.housing_cost;
-        return value ? interpolatedHousingColorScale(value) : "lightgray";
-      })
-      .attr("stroke", "#333")
-      .attr("stroke-width", 0.75)
-      .attr("opacity", (d) =>
-        d.properties.county_name === highlightedCounty ? 1 : 0.75
+      .data(mergedData.features, (d) => d.properties.county_name)
+      .join(
+        (enter) =>
+          enter
+            .append("path")
+            .attr("stroke", "#333")
+            .attr("stroke-width", 0.75)
+            .style("cursor", "pointer")
+            .call((enter) =>
+              enter
+                .transition()
+                .duration(350)
+                .attr("d", path)
+                .attr("fill", (d) =>
+                  d.properties.housing_cost
+                    ? interpolatedHousingColorScale(d.properties.housing_cost)
+                    : "lightgray"
+                )
+                .attr("opacity", (d) =>
+                  d.properties.county_name === highlightedCounty ? 1 : 0.75
+                )
+            ),
+        (update) =>
+          update.call((update) =>
+            update
+              .transition()
+              .duration(350)
+              .attr("d", path)
+              .attr("fill", (d) =>
+                d.properties.housing_cost
+                  ? interpolatedHousingColorScale(d.properties.housing_cost)
+                  : "lightgray"
+              )
+              .attr("opacity", (d) =>
+                d.properties.county_name === highlightedCounty ? 1 : 0.75
+              )
+          ),
+        (exit) => exit.remove()
       )
-      .style("cursor", "pointer")
-      // set up attributes for each county
-      .on("mouseover", function (event, d) {
-        d3.select(this).transition().duration(100).attr("opacity", 1);
+      // event handlers — now only update React state for tooltip
+      .on("mouseover", (event, d) => {
+        if (isFixed) return;
 
-        if (!isFixed) {
-          const rect = svgRef.current.getBoundingClientRect();
-          tooltip
-            .style("opacity", 1)
-            .style("left", `${event.clientX - rect.left + 10}px`)
-            .style("top", `${event.clientY - rect.top + 10}px`)
-            .style("right", "auto")
-            .style("bottom", "auto").html(`
-        <strong>${d.properties.CountyName}</strong><br/>
-        Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
-        Year: ${d.properties.year}
-      `);
+        setToolTipData({
+          countyName: d.properties.CountyName,
+          fixed: false,
+        });
+        const { x, y } = toLocal(event);
+        if (toolTipRef.current) {
+          toolTipRef.current.style.left = `${x}px`;
+          toolTipRef.current.style.top = `${y}px`;
         }
       })
-      .on("mousemove", function (event) {
-        if (!isFixed) {
-          const rect = svgRef.current.getBoundingClientRect();
-          tooltip
-            .style("left", `${event.clientX - rect.left + 10}px`)
-            .style("top", `${event.clientY - rect.top + 10}px`);
-        }
+      .on("mousemove", (event) => {
+        if (isFixed) return;
+        if (!toolTipRef.current) return;
+
+        const { x, y } = toLocal(event);
+        toolTipRef.current.style.left = `${x}px`;
+        toolTipRef.current.style.top = `${y}px`;
       })
-      .on("mouseout", function () {
-        d3.select(this).transition().duration(100).attr("opacity", 0.75);
-        if (!isFixed) {
-          tooltip.style("opacity", 0);
-        }
+      .on("mouseout", () => {
+        if (isFixed) return;
+        setToolTipData(null);
       })
       .on("click", function (event, d) {
-        console.log("here is something --->", d.properties.county_name);
         setHighlightedCounty(d.properties.county_name);
 
         const [[x0, y0], [x1, y1]] = path.bounds(d);
@@ -165,9 +166,6 @@ export default function CountyMap({
         const scale = 0.9 / Math.max(dx / width, dy / height);
         const translate = [width / 2 - scale * x, height / 2 - scale * y];
 
-        // setting the box in the bottom left corner
-
-        // Smooth transition on the group
         g.transition()
           .duration(750)
           .attr(
@@ -177,31 +175,41 @@ export default function CountyMap({
           .on("end", () => {
             setZoomState({ scale, translate });
             setIsFixed(true);
-            tooltip
-              .style("opacity", 1)
-              .style("left", "20px")
-              .style("top", "20px")
-              .style("bottom", "auto")
-              .style("right", "auto").html(`
-      <strong>${d.properties.CountyName}</strong><br/>
-      Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
-      Year: ${d.properties.year}
-      
-    `);
+
+            setToolTipData({
+              countyName: d.properties.CountyName,
+              fixed: true,
+            });
+            if (toolTipRef.current) {
+              toolTipRef.current.style.left = `20px`;
+              toolTipRef.current.style.top = `20px`;
+            }
           });
       });
-  }, [mergedData, isFixed]);
+  }, [mergedData, year, isFixed, zoomState]);
+
   if (!mergedData) return <Loading width={width} height={height} />;
   else
     return (
       <div className="relative w-[500px] h-[450px]">
         <svg ref={svgRef} width={500} height={450}></svg>
         {/* Tool tip object */}
-        <div
-          id="tooltip"
-          className="absolute bg-white border rounded-md shadow px-2 py-1 text-sm"
-          style={{ opacity: 0 }}
-        />
+        {toolTipData && (
+          <div
+            ref={toolTipRef}
+            className="absolute pointer-events-none bg-white border rounded-md shadow px-2 py-1 text-sm"
+            style={{ left: 0, top: 0 }}
+          >
+            <strong>{toolTipData.countyName}</strong>
+            <br />
+            Housing Cost:{" "}
+            {toolTipData.housingCost != null
+              ? formatPrice(toolTipData.housingCost)
+              : "N/A"}
+            <br />
+            Year: {toolTipData.year}
+          </div>
+        )}
 
         <div
           id="legend"
@@ -239,7 +247,7 @@ export default function CountyMap({
         <button
           onClick={() => {
             d3.select(svgRef.current)
-              .select("g")
+              .select("g#counties")
               .transition()
               .duration(750)
               .attr("transform", "translate(0,0) scale(1)")
@@ -247,9 +255,8 @@ export default function CountyMap({
                 setZoomState({ scale: 1, translate: [0, 0] });
                 setIsFixed(false);
                 setHighlightedCounty(null);
+                setToolTipData(null);
               });
-
-            d3.select("#tooltip").style("opacity", 0);
           }}
           className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
         >
