@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from "react";
-import { ZoomIn, ZoomOut } from "lucide-react";
+import { ZoomOut } from "lucide-react";
 import * as d3 from "d3";
 
 import { formatPrice, interpolatedHousingColorScale } from "../utils/format";
@@ -8,26 +8,29 @@ import Loading from "./LoadingScreen";
 export default function CountyMap({
   geoData,
   year,
+  housingData,
   mode,
   industryMode,
-  housingData,
   industryWorkersData,
 }) {
-  // for maintaining the zoom state when the year changes
   const [zoomState, setZoomState] = useState({ scale: 1, translate: [0, 0] });
   const [isFixed, setIsFixed] = useState(false);
   const [highlightedCounty, setHighlightedCounty] = useState(null);
   const [toolTipData, setToolTipData] = useState(null);
-  const toolTipRef = useRef(null);
 
   const svgRef = useRef();
+  const toolTipRef = useRef(null);
 
+  const width = 500;
+  const height = 450;
+
+  /** Filter housing data for the selected year */
   const filteredData = useMemo(() => {
     if (!housingData) return [];
     return housingData.filter((d) => Number(d.year) === Number(year));
   }, [housingData, year]);
 
-  // Pulling the housing and geo data from the app and combining them
+  /** Merge housing data into geo features */
   const mergedData = useMemo(() => {
     if (!geoData || !filteredData) return null;
 
@@ -48,11 +51,9 @@ export default function CountyMap({
         };
       }),
     };
-  });
+  }, [geoData, filteredData]);
 
-  const width = 500;
-  const height = 450;
-
+  /** Convert mouse event to local coordinates */
   const toLocal = (event) => {
     const rect = svgRef.current.getBoundingClientRect();
     return {
@@ -61,33 +62,36 @@ export default function CountyMap({
     };
   };
 
-  //fetching all the SQL info data and putting it into data state
+  /** Draw map whenever data or state changes */
   useEffect(() => {
     if (!mergedData) return;
 
-    // Setting up SVG and group
-    const svg = d3.select(svgRef.current);
-    let g = svg.select("g#counties");
-    if (g.empty()) {
-      g = svg
-        .append("g")
-        .attr("id", "counties") // give it an ID so we can select it later
-        .attr(
-          "transform",
-          `translate(${zoomState.translate[0]}, ${zoomState.translate[1]}) scale(${zoomState.scale})`
-        );
-    } else {
-      g.attr(
-        "transform",
-        `translate(${zoomState.translate[0]}, ${zoomState.translate[1]}) scale(${zoomState.scale})`
-      );
+    const county = mergedData.features.find(
+      (f) => f.properties.county_name === highlightedCounty
+    );
+
+    if (county) {
+      setToolTipData({
+        countyName: county.properties.CountyName,
+        housingCost: county.properties.housing_cost,
+        year: county.properties.year,
+        fixed: true,
+      });
     }
 
-    // projection and path generator
+    const svg = d3.select(svgRef.current);
+
+    let g = svg.select("g#counties");
+    if (g.empty()) {
+      g = svg.append("g").attr("id", "counties");
+    }
+    g.attr(
+      "transform",
+      `translate(${zoomState.translate[0]}, ${zoomState.translate[1]}) scale(${zoomState.scale})`
+    );
+
     const projection = d3.geoMercator().fitSize([width, height], geoData);
     const path = d3.geoPath().projection(projection);
-
-    // sets a tool tip object at the start of the creation of the map
 
     g.selectAll("path")
       .data(mergedData.features, (d) => d.properties.county_name)
@@ -129,14 +133,16 @@ export default function CountyMap({
           ),
         (exit) => exit.remove()
       )
-      // event handlers — now only update React state for tooltip
       .on("mouseover", (event, d) => {
         if (isFixed) return;
 
         setToolTipData({
           countyName: d.properties.CountyName,
+          housingCost: d.properties.housing_cost,
+          year: d.properties.year,
           fixed: false,
         });
+
         const { x, y } = toLocal(event);
         if (toolTipRef.current) {
           toolTipRef.current.style.left = `${x}px`;
@@ -144,16 +150,14 @@ export default function CountyMap({
         }
       })
       .on("mousemove", (event) => {
-        if (isFixed) return;
-        if (!toolTipRef.current) return;
+        if (isFixed || !toolTipRef.current) return;
 
         const { x, y } = toLocal(event);
         toolTipRef.current.style.left = `${x}px`;
         toolTipRef.current.style.top = `${y}px`;
       })
       .on("mouseout", () => {
-        if (isFixed) return;
-        setToolTipData(null);
+        if (!isFixed) setToolTipData(null);
       })
       .on("click", function (event, d) {
         setHighlightedCounty(d.properties.county_name);
@@ -178,6 +182,8 @@ export default function CountyMap({
 
             setToolTipData({
               countyName: d.properties.CountyName,
+              housingCost: d.properties.housing_cost,
+              year: d.properties.year,
               fixed: true,
             });
             if (toolTipRef.current) {
@@ -186,82 +192,85 @@ export default function CountyMap({
             }
           });
       });
-  }, [mergedData, year, isFixed, zoomState]);
+  }, [mergedData, year, isFixed, zoomState, highlightedCounty, geoData]);
 
-  if (!mergedData) return <Loading width={width} height={height} />;
-  else
-    return (
-      <div className="relative w-[500px] h-[450px]">
-        <svg ref={svgRef} width={500} height={450}></svg>
-        {/* Tool tip object */}
-        {toolTipData && (
-          <div
-            ref={toolTipRef}
-            className="absolute pointer-events-none bg-white border rounded-md shadow px-2 py-1 text-sm"
-            style={{ left: 0, top: 0 }}
-          >
-            <strong>{toolTipData.countyName}</strong>
-            <br />
-            Housing Cost:{" "}
-            {toolTipData.housingCost != null
-              ? formatPrice(toolTipData.housingCost)
-              : "N/A"}
-            <br />
-            Year: {toolTipData.year}
-          </div>
-        )}
+  if (!mergedData) {
+    return <Loading width={width} height={height} />;
+  }
 
+  return (
+    <div className="relative w-[500px] h-[450px]">
+      <svg ref={svgRef} width={width} height={height}></svg>
+
+      {/* Tooltip */}
+      {toolTipData && (
         <div
-          id="legend"
-          className="absolute bottom-2 left-2 w-[220px] bg-white border rounded-md shadow p-3"
+          ref={toolTipRef}
+          className="absolute pointer-events-none bg-white border rounded-md shadow px-2 py-1 text-sm"
+          style={{ left: 0, top: 0 }}
         >
-          {/* Gradient */}
-          <div
-            className="h-6 w-full rounded relative"
-            style={{
-              background:
-                "linear-gradient(to right, #006400 0%,#a6d96a 8%,#ffff66 21%,#fdae61 34%,#d7191c 47%,#4B0000 73%,#000000 100%)",
-            }}
-          ></div>
-
-          {/* Labels */}
-          <div className="relative w-full h-6 mt-2">
-            <span className="absolute text-xs left-[0%] -translate-x-1/2">
-              100k
-            </span>
-            <span className="absolute text-xs left-[17%] -translate-x-1/2">
-              500k
-            </span>
-            <span className="absolute text-xs left-[47%] -translate-x-1/2">
-              1M
-            </span>
-            <span className="absolute text-xs left-[73%] -translate-x-1/2">
-              1.5M
-            </span>
-            <span className="absolute text-xs left-[100%] -translate-x-1/2">
-              2M
-            </span>
-          </div>
+          <strong>{toolTipData.countyName}</strong>
+          <br />
+          Housing Cost:{" "}
+          {toolTipData.housingCost != null
+            ? formatPrice(toolTipData.housingCost)
+            : "N/A"}
+          <br />
+          Year: {toolTipData.year ?? "N/A"}
         </div>
+      )}
 
-        <button
-          onClick={() => {
-            d3.select(svgRef.current)
-              .select("g#counties")
-              .transition()
-              .duration(750)
-              .attr("transform", "translate(0,0) scale(1)")
-              .on("end", () => {
-                setZoomState({ scale: 1, translate: [0, 0] });
-                setIsFixed(false);
-                setHighlightedCounty(null);
-                setToolTipData(null);
-              });
+      {/* Legend */}
+      <div
+        id="legend"
+        className="absolute bottom-2 left-2 w-[220px] bg-white border rounded-md shadow p-3"
+      >
+        <div
+          className="h-6 w-full rounded"
+          style={{
+            background:
+              "linear-gradient(to right, #006400 0%,#a6d96a 8%,#ffff66 21%,#fdae61 34%,#d7191c 47%,#4B0000 73%,#000000 100%)",
           }}
-          className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
-        >
-          <ZoomOut size={16} />
-        </button>
+        ></div>
+
+        <div className="relative w-full h-6 mt-2">
+          <span className="absolute text-xs left-[0%] -translate-x-1/2">
+            $100k
+          </span>
+          <span className="absolute text-xs left-[20%] -translate-x-1/2">
+            $500k
+          </span>
+          <span className="absolute text-xs left-[47%] -translate-x-1/2">
+            $1M
+          </span>
+          <span className="absolute text-xs left-[73%] -translate-x-1/2">
+            $1.5M
+          </span>
+          <span className="absolute text-xs left-[100%] -translate-x-1/2">
+            $2M
+          </span>
+        </div>
       </div>
-    );
+
+      {/* Reset Zoom */}
+      <button
+        onClick={() => {
+          d3.select(svgRef.current)
+            .select("g#counties")
+            .transition()
+            .duration(750)
+            .attr("transform", "translate(0,0) scale(1)")
+            .on("end", () => {
+              setZoomState({ scale: 1, translate: [0, 0] });
+              setIsFixed(false);
+              setHighlightedCounty(null);
+              setToolTipData(null);
+            });
+        }}
+        className="absolute top-2 right-2 z-10 bg-primary text-white px-2 py-1 text-xs rounded shadow"
+      >
+        <ZoomOut size={16} />
+      </button>
+    </div>
+  );
 }
