@@ -42,7 +42,63 @@ export default function MultiLineChart({
       housing_cost: +d.housing_cost,
       workers: +d.workers_per_mil,
     }));
+
+    // Scales
+
+    const xScale = d3
+      .scaleTime()
+      .domain(d3.extent(dataProcessed, (d) => d.year))
+      .range([0, innerWidth]);
+
+    const yLeft = d3
+      .scaleLinear()
+      .domain([0, d3.max(dataProcessed, (d) => d.housing_cost)])
+      .nice()
+      .range([innerHeight, 0]);
+
+    const yRight = d3
+      .scaleLinear()
+      .domain([0, d3.max(dataProcessed, (d) => d.workers)])
+      .nice()
+      .range([innerHeight, 0]);
+
+    // Axes
+
+    g.append("g")
+      .attr("transform", `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(xScale).ticks(5));
+
+    g.append("g").call(d3.axisLeft(yLeft));
+    g.append("g")
+      .append("g")
+      .attr("transform", `translate(${innerWidth},0)`)
+      .call(d3.axisRight(yRight));
+
+    // Lines
+    const housingLine = d3
+      .line()
+      .x((d) => xScale(d.year))
+      .y((d) => yLeft(d.housing_cost));
+
+    const workersLine = d3
+      .line()
+      .x((d) => xScale(d.year))
+      .y((d) => yRight(d.workers));
+
+    g.append("path")
+      .datum(dataProcessed)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2)
+      .attr("d", housingLine);
+
+    g.append("path")
+      .datum(dataProcessed)
+      .attr("fill", "none")
+      .attr("stroke", "tomato")
+      .attr("stroke-width", 2)
+      .attr("d", workersLine);
   }, [industryHousingData, industryMode, county, industryMode]);
 
-  return <div></div>;
+  return <svg ref={svgRef} width={width} height={height} />;
 }
