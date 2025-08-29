@@ -141,7 +141,6 @@ export default function CountyMap({
         const translate = [width / 2 - scale * x, height / 2 - scale * y];
 
         // setting the box in the bottom left corner
-        setIsFixed(true);
 
         tooltip
           .style("opacity", 1)
@@ -152,6 +151,7 @@ export default function CountyMap({
       <strong>${d.properties.CountyName}</strong><br/>
       Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
       Year: ${d.properties.year}
+      
     `);
 
         // Smooth transition on the group
@@ -160,8 +160,11 @@ export default function CountyMap({
           .attr(
             "transform",
             `translate(${translate[0]},${translate[1]}) scale(${scale})`
-          );
-        setZoomState({ scale, translate });
+          )
+          .on("end", () => {
+            setZoomState({ scale, translate });
+            setIsFixed(true);
+          });
       });
   }, [geoData, year, isFixed]);
   if (!mergedData) return <Loading width={width} height={height} />;
@@ -182,9 +185,12 @@ export default function CountyMap({
               .select("g")
               .transition()
               .duration(750)
-              .attr("transform", "translate(0,0) scale(1)");
-            setZoomState({ scale: 1, translate: [0, 0] });
-            setIsFixed(false);
+              .attr("transform", "translate(0,0) scale(1)")
+              .on("end", () => {
+                setZoomState({ scale: 1, translate: [0, 0] });
+                setIsFixed(false);
+              });
+
             d3.select("#tooltip").style("opacity", 0);
           }}
           className="absolute top-2 right-2 z-10 btn bg-primary text-white px-2 py-1 text-xs"
