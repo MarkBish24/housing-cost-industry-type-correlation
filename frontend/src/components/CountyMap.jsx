@@ -167,6 +167,18 @@ export default function CountyMap({
 
         // setting the box in the bottom left corner
 
+        tooltip
+          .style("opacity", 1)
+          .style("left", "20px")
+          .style("bottom", "20px")
+          .style("top", "auto")
+          .style("right", "auto").html(`
+      <strong>${d.properties.CountyName}</strong><br/>
+      Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
+      Year: ${d.properties.year}
+      
+    `);
+
         // Smooth transition on the group
         g.transition()
           .duration(750)
@@ -177,17 +189,6 @@ export default function CountyMap({
           .on("end", () => {
             setZoomState({ scale, translate });
             setIsFixed(true);
-            tooltip
-              .style("opacity", 1)
-              .style("left", "20px")
-              .style("top", "20px")
-              .style("bottom", "auto")
-              .style("right", "auto").html(`
-      <strong>${d.properties.CountyName}</strong><br/>
-      Housing Cost: ${formatPrice(d.properties.housing_cost) || "N/A"}<br/>
-      Year: ${d.properties.year}
-      
-    `);
           });
       });
   }, [mergedData, isFixed]);
@@ -246,7 +247,6 @@ export default function CountyMap({
               .on("end", () => {
                 setZoomState({ scale: 1, translate: [0, 0] });
                 setIsFixed(false);
-                setHighlightedCounty(null);
               });
 
             d3.select("#tooltip").style("opacity", 0);
