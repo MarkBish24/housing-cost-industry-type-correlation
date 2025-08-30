@@ -67,11 +67,21 @@ export default function MultiLineChart({
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(xScale).ticks(5));
 
-    g.append("g").call(d3.axisLeft(yLeft));
+    g.append("g")
+      .call(
+        d3
+          .axisLeft(yLeft)
+          .ticks(5)
+          .tickFormat((d) => `$${d3.format(",")(d)}`)
+      )
+      .selectAll("text")
+      .attr("fill", "steelblue");
     g.append("g")
       .append("g")
       .attr("transform", `translate(${innerWidth},0)`)
-      .call(d3.axisRight(yRight));
+      .call(d3.axisRight(yRight))
+      .selectAll("text")
+      .attr("fill", "tomato");
 
     // Lines
     const housingLine = d3
