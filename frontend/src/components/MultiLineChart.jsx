@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import * as d3 from "d3";
+import Loading from "./LoadingScreen";
 
 export default function MultiLineChart({
   industryMode,
@@ -121,5 +122,9 @@ export default function MultiLineChart({
       .text(`Industry Workers - ${industryMode} - per mil  (right, red)`);
   }, [industryHousingData, industryMode, county, industryMode]);
 
-  return <svg ref={svgRef} width={width} height={height} />;
+  return !industryHousingData || !industryMode || !county ? (
+    <Loading width={width} height={height} />
+  ) : (
+    <svg ref={svgRef} width={width} height={height} />
+  );
 }

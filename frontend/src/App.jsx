@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import CountyMap from "./components/CountyMap";
 import MultiLineChart from "./components/MultiLineChart";
+import ChartSelection from "./components/ChartSelection";
 
 function App() {
   // Selections for filtering data
@@ -72,6 +73,7 @@ function App() {
           setHighlightedCounty={setHighlightedCounty}
         />
         <div className="flex flex-col gap-4 items-center justify-between">
+          <ChartSelection />
           <MultiLineChart
             industryHousingData={industryHousingData}
             county={highlightedCounty}
