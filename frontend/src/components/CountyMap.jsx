@@ -23,7 +23,7 @@ export default function CountyMap({
   const toolTipRef = useRef(null);
 
   const width = 500;
-  const height = 450;
+  const height = 500;
 
   /** Filter housing data for the selected year */
   const filteredData = useMemo(() => {
@@ -200,7 +200,7 @@ export default function CountyMap({
   }
 
   return (
-    <div className="relative w-[500px] h-[450px]">
+    <div className="relative w-[500px] h-[500px]">
       <svg ref={svgRef} width={width} height={height}></svg>
 
       {/* Tooltip */}

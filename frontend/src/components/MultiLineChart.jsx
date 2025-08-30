@@ -5,12 +5,11 @@ export default function MultiLineChart({
   industryMode,
   county,
   industryHousingData,
+  width,
+  height,
 }) {
   const [data, setData] = useState([]);
   const svgRef = useRef();
-
-  const width = 600;
-  const height = 400;
 
   useEffect(() => {
     if (!industryHousingData || !industryMode || !county) return;

@@ -46,6 +46,10 @@ function App() {
     fetchData();
   }, []);
 
+  // side squares sizes
+  const width = 500;
+  const height = 275;
+
   return (
     <div data-theme="autumn" className="bg-white min-h-screen px-6 pt-32">
       <Header
@@ -56,21 +60,34 @@ function App() {
         year={year}
         setYear={setYear}
       />
-      <CountyMap
-        geoData={geoData}
-        year={year}
-        mode={mode}
-        industryMode={industryMode}
-        housingData={housingData}
-        industryWorkersData={industryWorkersData}
-        highlightedCounty={highlightedCounty}
-        setHighlightedCounty={setHighlightedCounty}
-      />
-      <MultiLineChart
-        industryHousingData={industryHousingData}
-        county={highlightedCounty}
-        industryMode={industryMode}
-      />
+      <div className="flex flex-row gap-4 items-center justify-between">
+        <CountyMap
+          geoData={geoData}
+          year={year}
+          mode={mode}
+          industryMode={industryMode}
+          housingData={housingData}
+          industryWorkersData={industryWorkersData}
+          highlightedCounty={highlightedCounty}
+          setHighlightedCounty={setHighlightedCounty}
+        />
+        <div className="flex flex-col gap-4 items-center justify-between">
+          <MultiLineChart
+            industryHousingData={industryHousingData}
+            county={highlightedCounty}
+            industryMode={industryMode}
+            width={width}
+            height={height}
+          />
+          <MultiLineChart
+            industryHousingData={industryHousingData}
+            county={highlightedCounty}
+            industryMode={industryMode}
+            width={width}
+            height={height}
+          />
+        </div>
+      </div>
     </div>
   );
 }
