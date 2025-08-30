@@ -98,6 +98,18 @@ export default function MultiLineChart({
       .attr("stroke", "tomato")
       .attr("stroke-width", 2)
       .attr("d", workersLine);
+    // Labels
+    svg
+      .append("text")
+      .attr("x", margin.left)
+      .attr("y", margin.top - 10)
+      .text(`Housing Cost in ${county} (left, blue)`);
+
+    svg
+      .append("text")
+      .attr("x", width - margin.right - 100)
+      .attr("y", margin.top - 10)
+      .text(`Industry Workers - ${industryMode} - per mil  (right, red)`);
   }, [industryHousingData, industryMode, county, industryMode]);
 
   return <svg ref={svgRef} width={width} height={height} />;
