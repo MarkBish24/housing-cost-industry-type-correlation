@@ -1,7 +1,12 @@
 import { BarChart2, LineChart, ScatterChart } from "lucide-react";
 import { FaChartBar, FaChartLine, FaChartPie } from "react-icons/fa";
 import { BiScatterChart } from "react-icons/bi";
-import { TbBox } from "react-icons/tb"; // box plot-ish
+import { TbBox } from "react-icons/tb";
+import violinSvg from "../symbols/violin.svg";
+
+const ViolinIcon = (props) => (
+  <img src={violinSvg} alt="Violin Chart" {...props} />
+);
 
 const IconList = [
   { name: "Bar Chart", icon: BarChart2 },
@@ -9,6 +14,7 @@ const IconList = [
   { name: "Scatter Plot", icon: ScatterChart },
   { name: "Box Plot", icon: TbBox },
   { name: "Bubble Chart", icon: BiScatterChart },
+  { name: "Violin Plot", icon: ViolinIcon },
 ];
 
 export default function ChartSelection() {
