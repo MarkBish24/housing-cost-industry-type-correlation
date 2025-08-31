@@ -1,3 +1,7 @@
+import { useEffect, useRef, useState, useMemo } from "react";
+// Charts
+import MultiLineChart from "./Charts/MultiLineChart";
+// symbols
 import { BarChart2, LineChart, ScatterChart } from "lucide-react";
 import { BiScatterChart } from "react-icons/bi";
 import { TbBox } from "react-icons/tb";
@@ -16,7 +20,11 @@ const IconList = [
   { name: "Violin Plot", icon: ViolinIcon },
 ];
 
-export default function ChartSelection() {
+export default function ChartSelection({
+  slotIndex,
+  selectedCharts,
+  setSelectedCharts,
+}) {
   return (
     <div className="flex flex-wrap gap-1 p-2 justify-center border rounded-xl shadow-sm">
       {IconList.map(({ name, icon: Icon }) => (

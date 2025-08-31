@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
-import CountyMap from "./components/CountyMap";
-import MultiLineChart from "./components/MultiLineChart";
-import ChartSelection from "./components/ChartSelection";
+import CountyMap from "./components/Charts/CountyMap.jsx";
+import MultiLineChart from "./components/Charts/MultiLineChart.jsx";
+import ChartSelection from "./components/ChartSelection.jsx";
 
 function App() {
   // Selections for filtering data
@@ -18,6 +18,13 @@ function App() {
   const [housingData, setHousingData] = useState(null);
   const [industryWorkersData, setIndustryWorkersData] = useState(null);
   const [industryHousingData, setIndustryHousingData] = useState(null);
+
+  //chart selection
+
+  const [selectedCharts, setSelectedCharts] = useState([
+    "Line Chart",
+    "Line Chart",
+  ]);
 
   // Fetches all the Data from the SQL data base so it will be cached so we don't have to do multiple pull requests
   // at most 30,000 rows
@@ -73,13 +80,22 @@ function App() {
           setHighlightedCounty={setHighlightedCounty}
         />
         <div className="flex flex-col gap-4 items-center justify-between">
-          <ChartSelection />
+          <ChartSelection
+            slotIndex={0}
+            selectedCharts={selectedCharts}
+            setSelectedCharts={setSelectedCharts}
+          />
           <MultiLineChart
             industryHousingData={industryHousingData}
             county={highlightedCounty}
             industryMode={industryMode}
             width={width}
             height={height}
+          />
+          <ChartSelection
+            slotIndex={0}
+            selectedCharts={selectedCharts}
+            setSelectedCharts={setSelectedCharts}
           />
           <MultiLineChart
             industryHousingData={industryHousingData}

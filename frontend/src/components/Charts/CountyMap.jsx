@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { ZoomOut } from "lucide-react";
 import * as d3 from "d3";
 
-import { formatPrice, interpolatedHousingColorScale } from "../utils/format";
-import Loading from "./LoadingScreen";
+import { formatPrice, interpolatedHousingColorScale } from "../../utils/format";
+import Loading from "../LoadingScreen";
 
 export default function CountyMap({
   geoData,

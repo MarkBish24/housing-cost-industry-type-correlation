@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import * as d3 from "d3";
-import Loading from "./LoadingScreen";
+import Loading from "../LoadingScreen";
 
 export default function MultiLineChart({
   industryMode,
