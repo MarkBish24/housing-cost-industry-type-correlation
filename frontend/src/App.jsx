@@ -80,34 +80,57 @@ function App() {
           setHighlightedCounty={setHighlightedCounty}
         />
         <div className="flex flex-col gap-4 items-center justify-between">
-          <ChartSelection
-            slotIndex={0}
-            selectedCharts={selectedCharts}
-            setSelectedCharts={setSelectedCharts}
-          />
-          <MultiLineChart
-            industryHousingData={industryHousingData}
-            county={highlightedCounty}
-            industryMode={industryMode}
-            width={width}
-            height={height}
-          />
-          <ChartSelection
-            slotIndex={0}
-            selectedCharts={selectedCharts}
-            setSelectedCharts={setSelectedCharts}
-          />
-          <MultiLineChart
-            industryHousingData={industryHousingData}
-            county={highlightedCounty}
-            industryMode={industryMode}
-            width={width}
-            height={height}
-          />
+          <div>
+            <ChartSelection
+              slotIndex={0}
+              selectedCharts={selectedCharts}
+              setSelectedCharts={setSelectedCharts}
+            />
+            <MultiLineChart
+              industryHousingData={industryHousingData}
+              county={highlightedCounty}
+              industryMode={industryMode}
+              width={width}
+              height={height}
+            />
+          </div>
+          <div>
+            <ChartSelection
+              slotIndex={1}
+              selectedCharts={selectedCharts}
+              setSelectedCharts={setSelectedCharts}
+            />
+            {renderChart(selectedCharts[1], {
+              industryHousingData,
+              county: highlightedCounty,
+              industryMode,
+              width,
+              height,
+            })}
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+function renderChart(type, props) {
+  switch (type) {
+    case "Line Chart":
+      return <MultiLineChart {...props} />;
+    case "Bar Chart":
+      return <div>TODO: BarChart Component</div>;
+    case "Scatter Plot":
+      return <div>TODO: ScatterPlot Component</div>;
+    case "Bubble Chart":
+      return <div>TODO: BubbleChart Component</div>;
+    case "Box Plot":
+      return <div>TODO: BoxPlot Component</div>;
+    case "Violin Plot":
+      return <div>TODO: ViolinPlot Component</div>;
+    default:
+      return <div>None Selected</div>;
+  }
 }
 
 export default App;

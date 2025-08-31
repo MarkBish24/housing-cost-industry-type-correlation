@@ -32,6 +32,14 @@ export default function ChartSelection({
           key={name}
           className="flex flex-col items-center justify-center p-2 border rounded-xl shadow-sm hover:bg-gray-100 transition cursor-pointer"
           title={name}
+          onClick={() => {
+            setSelectedCharts((prev) => {
+              const newCharts = [...prev];
+              newCharts[slotIndex] = name;
+              console.log(name, newCharts);
+              return newCharts;
+            });
+          }}
         >
           <Icon className="w-4 h-4" />
         </div>
