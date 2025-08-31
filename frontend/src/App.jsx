@@ -86,13 +86,13 @@ function App() {
               selectedCharts={selectedCharts}
               setSelectedCharts={setSelectedCharts}
             />
-            <MultiLineChart
-              industryHousingData={industryHousingData}
-              county={highlightedCounty}
-              industryMode={industryMode}
-              width={width}
-              height={height}
-            />
+            {renderChart(selectedCharts[0], {
+              industryHousingData,
+              county: highlightedCounty,
+              industryMode,
+              width,
+              height,
+            })}
           </div>
           <div>
             <ChartSelection
