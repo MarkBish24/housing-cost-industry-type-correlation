@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import * as d3 from "d3";
 import Loading from "../LoadingScreen";
 import {
@@ -29,7 +29,7 @@ export default function IndustryBarChart({
       .slice(0, 10);
 
     const data = filtered;
-    console.log(data);
+    // console.log(data);
 
     // setting up box
     const svg = d3.select(svgRef.current);

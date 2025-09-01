@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
-import CountyMap from "./components/Charts/CountyMap.jsx";
-import MultiLineChart from "./components/Charts/MultiLineChart.jsx";
 import ChartSelection from "./components/ChartSelection.jsx";
 import Loading from "./components/LoadingScreen.jsx";
+
+// charts
+import CountyMap from "./components/Charts/CountyMap.jsx";
+import MultiLineChart from "./components/Charts/MultiLineChart.jsx";
 import IndustryBarChart from "./components/Charts/IndustryBarCharts.jsx";
+import ScatterPlot from "./components/Charts/ScatterPlot.jsx";
 
 function App() {
   // Selections for filtering data
@@ -129,7 +132,7 @@ function renderChart(type, props) {
     case "Bar Chart":
       return <IndustryBarChart {...props} />;
     case "Scatter Plot":
-      return <div>TODO: ScatterPlot Component</div>;
+      return <ScatterPlot {...props} />;
     case "Bubble Chart":
       return <div>TODO: BubbleChart Component</div>;
     case "Box Plot":
