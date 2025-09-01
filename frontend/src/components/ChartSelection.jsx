@@ -20,6 +20,10 @@ const IconList = [
   { name: "Violin Plot", icon: ViolinIcon },
 ];
 
+const unselectedButton = " hover:bg-gray-100 transition ";
+const selectedButton = "bg-gray-300 disabled";
+const activeButton = "bg-primary disabled";
+
 export default function ChartSelection({
   slotIndex,
   selectedCharts,
@@ -30,9 +34,16 @@ export default function ChartSelection({
       {IconList.map(({ name, icon: Icon }) => (
         <div
           key={name}
-          className="flex flex-col items-center justify-center p-2 border rounded-xl shadow-sm hover:bg-gray-100 transition cursor-pointer"
+          className={`flex flex-col items-center justify-center p-2 border rounded-xl shadow-sm cursor-pointer ${
+            selectedCharts[slotIndex] === name
+              ? activeButton
+              : selectedCharts.includes(name)
+              ? selectedButton
+              : unselectedButton
+          }`}
           title={name}
           onClick={() => {
+            if (selectedCharts.includes(name)) return;
             setSelectedCharts((prev) => {
               const newCharts = [...prev];
               newCharts[slotIndex] = name;
