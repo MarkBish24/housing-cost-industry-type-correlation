@@ -1,6 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import * as d3 from "d3";
 import Loading from "../LoadingScreen";
+import {
+  formatPrice,
+  interpolatedHousingColorScale,
+} from "../../utils/format.js";
 
 export default function IndustryBarChart({
   industryHousingData,
@@ -9,7 +13,6 @@ export default function IndustryBarChart({
   width,
   height,
 }) {
-  const [data, setData] = useState([]);
   const svgRef = useRef();
 
   useEffect(() => {
@@ -25,9 +28,10 @@ export default function IndustryBarChart({
       .sort((a, b) => b.workers_per_mil - a.workers_per_mil)
       .slice(0, 10);
 
-    setData(filtered);
+    const data = filtered;
     console.log(data);
 
+    // setting up box
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
@@ -38,5 +42,33 @@ export default function IndustryBarChart({
     const g = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    //
+
+    const x = d3
+      .scaleBand()
+      .domain(data.map((d) => d.county_name))
+      .range([0, innerWidth])
+      .padding(0.1);
+
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max(data, (d) => d.workers_per_mil)])
+      .range([innerHeight, 0]);
+
+    g.selectAll("rect")
+      .data(data)
+      .join("rect")
+      .attr("x", (d) => x(d.county_name))
+      .attr("y", (d) => y(d.workers_per_mil))
+      .attr("width", x.bandwidth())
+      .attr("height", (d) => innerHeight - y(d.workers_per_mil))
+      .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost));
   }, [industryHousingData, year, industryMode]);
+
+  return !industryHousingData ? (
+    <Loading width={width} height={height} />
+  ) : (
+    <svg ref={svgRef} width={width} height={height} />
+  );
 }
