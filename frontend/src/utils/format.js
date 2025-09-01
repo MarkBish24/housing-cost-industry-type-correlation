@@ -10,7 +10,7 @@ export function formatPrice(value) {
   });
 }
 
-export const interpolatedHousingColorScale = d3
+export const getHousingColor = d3
   .scaleLinear()
   .domain([100000, 250000, 500000, 750000, 1000000, 1500000, 2000000]) // your thresholds
   .range([
@@ -23,3 +23,8 @@ export const interpolatedHousingColorScale = d3
     "#000000",
   ]) // green → yellow → orange → red → dark red
   .clamp(true);
+
+export function interpolatedHousingColorScale(value) {
+  if (value === null || value === 0) return "#808080"; // gray
+  return getHousingColor(value);
+}

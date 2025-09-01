@@ -74,7 +74,7 @@ export default function IndustryBarChart({
         d3.axisBottom(x).tickFormat((d) => {
           const parts = d.split(" ");
           let label = parts.slice(0, -1).join(" ");
-          if (label.length > 10) label = label.slice(0, 7) + "…"; // truncate
+          if (label.length > 9) label = label.slice(0, 6) + "…"; // truncate
           return label;
         })
       );

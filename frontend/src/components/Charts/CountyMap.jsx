@@ -100,8 +100,8 @@ export default function CountyMap({
         (enter) =>
           enter
             .append("path")
-            .attr("stroke", "#333")
-            .attr("stroke-width", 0.75)
+            .attr("stroke", "#FFFFFF")
+            .attr("stroke-width", 0.3)
             .style("cursor", "pointer")
             .call((enter) =>
               enter

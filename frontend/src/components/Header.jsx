@@ -65,7 +65,7 @@ export default function Header({
             min={2010}
             max={2024}
             value={year}
-            onChange={(e) => setYear(e.target.value)}
+            onChange={(e) => setYear(Number(e.target.value))}
             className="range range-primary w-3/4"
           />
         </div>
@@ -86,7 +86,7 @@ export default function Header({
           </button>
           <ul
             tabIndex={0}
-            className="dropdown-content menu bg-base-100 z-[1] w-52 p-2 shadow max-h-100"
+            className="dropdown-content menu bg-base-100 z-[1] w-52 p-2 shadow max-h-64 overflow-y-auto"
           >
             {industryTitles.map((item, index) => (
               <li
