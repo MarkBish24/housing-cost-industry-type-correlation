@@ -43,7 +43,7 @@ export default function IndustryBarChart({
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    //
+    // rectangles - bars
 
     const x = d3
       .scaleBand()
@@ -53,7 +53,8 @@ export default function IndustryBarChart({
 
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.workers_per_mil)])
+      .domain([0, d3.max(data, (d) => +d.workers_per_mil)])
+      .nice()
       .range([innerHeight, 0]);
 
     g.selectAll("rect")
@@ -64,6 +65,21 @@ export default function IndustryBarChart({
       .attr("width", x.bandwidth())
       .attr("height", (d) => innerHeight - y(d.workers_per_mil))
       .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost));
+
+    // axes
+
+    g.append("g")
+      .attr("transform", `translate(0,${innerHeight})`)
+      .call(
+        d3.axisBottom(x).tickFormat((d) => {
+          const parts = d.split(" ");
+          let label = parts.slice(0, -1).join(" ");
+          if (label.length > 10) label = label.slice(0, 7) + "…"; // truncate
+          return label;
+        })
+      );
+
+    g.append("g").call(d3.axisLeft(y));
   }, [industryHousingData, year, industryMode]);
 
   return !industryHousingData ? (
