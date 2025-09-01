@@ -22,7 +22,7 @@ const IconList = [
 
 const unselectedButton = " hover:bg-gray-100 transition ";
 const selectedButton = "bg-gray-300 disabled";
-const activeButton = "bg-primary disabled";
+const activeButton = "bg-primary disabled text-white fill-white";
 
 export default function ChartSelection({
   slotIndex,
@@ -30,7 +30,7 @@ export default function ChartSelection({
   setSelectedCharts,
 }) {
   return (
-    <div className="flex flex-wrap gap-1 p-2 justify-center border rounded-xl shadow-sm">
+    <div className="flex flex-wrap gap-1 p-2 justify-center border rounded-xl shadow-sm items-center">
       {IconList.map(({ name, icon: Icon }) => (
         <div
           key={name}

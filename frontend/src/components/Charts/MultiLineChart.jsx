@@ -22,7 +22,7 @@ export default function MultiLineChart({
     );
 
     setData(filtered);
-    console.log(data);
+    // console.log(data);
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();

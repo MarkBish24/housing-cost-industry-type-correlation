@@ -3,6 +3,8 @@ import Header from "./components/Header";
 import CountyMap from "./components/Charts/CountyMap.jsx";
 import MultiLineChart from "./components/Charts/MultiLineChart.jsx";
 import ChartSelection from "./components/ChartSelection.jsx";
+import Loading from "./components/LoadingScreen.jsx";
+import IndustryBarChart from "./components/Charts/IndustryBarCharts.jsx";
 
 function App() {
   // Selections for filtering data
@@ -88,10 +90,13 @@ function App() {
             />
             {renderChart(selectedCharts[0], {
               industryHousingData,
+              industryWorkersData,
+              housingData,
               county: highlightedCounty,
               industryMode,
               width,
               height,
+              year,
             })}
           </div>
           <div>
@@ -102,10 +107,13 @@ function App() {
             />
             {renderChart(selectedCharts[1], {
               industryHousingData,
+              industryWorkersData,
+              housingData,
               county: highlightedCounty,
               industryMode,
               width,
               height,
+              year,
             })}
           </div>
         </div>
@@ -119,7 +127,7 @@ function renderChart(type, props) {
     case "Line Chart":
       return <MultiLineChart {...props} />;
     case "Bar Chart":
-      return <div>TODO: BarChart Component</div>;
+      return <IndustryBarChart {...props} />;
     case "Scatter Plot":
       return <div>TODO: ScatterPlot Component</div>;
     case "Bubble Chart":
@@ -129,7 +137,7 @@ function renderChart(type, props) {
     case "Violin Plot":
       return <div>TODO: ViolinPlot Component</div>;
     default:
-      return <div>None Selected</div>;
+      return <Loading width={width} height={height} />;
   }
 }
 
