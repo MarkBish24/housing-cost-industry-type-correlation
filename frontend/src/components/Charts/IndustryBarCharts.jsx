@@ -14,6 +14,7 @@ export default function IndustryBarChart({
   height,
 }) {
   const svgRef = useRef();
+  const tooltipRef = useRef();
 
   useEffect(() => {
     if (!industryHousingData) return;
@@ -43,6 +44,8 @@ export default function IndustryBarChart({
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    const tooltip = d3.select(tooltipRef.current);
+
     // rectangles - bars
 
     const x = d3
@@ -64,7 +67,45 @@ export default function IndustryBarChart({
       .attr("y", (d) => y(d.workers_per_mil))
       .attr("width", x.bandwidth())
       .attr("height", (d) => innerHeight - y(d.workers_per_mil))
-      .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost));
+      .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost))
+      .on("mouseover", function (event, d) {
+        const hoverWidth = x.bandwidth() * 1.1;
+        const shrinkWidth = x.bandwidth() * 0.9;
+
+        g.selectAll("rect")
+          .transition()
+          .duration(100)
+          .ease(d3.easeCubicOut)
+          .attr("width", (b) => (b === d ? hoverWidth : shrinkWidth))
+          .attr("x", (b) => {
+            const originalX = x(b.county_name);
+            if (b === d) return originalX - (hoverWidth - x.bandwidth()) / 2;
+            return originalX + (x.bandwidth() - shrinkWidth) / 2;
+          });
+
+        tooltip.style("opacity", 1).html(
+          `
+            <strong>County: ${d.county_name} </strong><br/>
+            Housing Cost: $${d.housing_cost}<br/>
+            Workers: ${d.workers_per_mil} <br/>
+          `
+        );
+      })
+      .on("mousemove", function () {
+        tooltip
+          .style("left", event.pageX + 15 + "px")
+          .style("top", event.pageY - 30 + "px");
+      })
+      .on("mouseleave", function () {
+        tooltip.style("opacity", 0);
+
+        g.selectAll("rect")
+          .transition()
+          .duration(200)
+          .ease(d3.easeCubicOut)
+          .attr("width", x.bandwidth())
+          .attr("x", (d) => x(d.county_name));
+      });
 
     // axes
 
@@ -85,6 +126,12 @@ export default function IndustryBarChart({
   return !industryHousingData ? (
     <Loading width={width} height={height} />
   ) : (
-    <svg ref={svgRef} width={width} height={height} />
+    <>
+      <svg ref={svgRef} width={width} height={height} />
+      <div
+        ref={tooltipRef}
+        className="absolute opacity-0  bg-white border border-gray-300 rounded-lg px-2 py-1.5 pointer-events-none text-xs shadow-md"
+      ></div>
+    </>
   );
 }

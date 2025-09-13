@@ -16,7 +16,12 @@ export default function ScatterPlot({
 
     let filtered = industryHousingData;
 
-    const data = filtered.filter((d) => d.industry_name === industryMode);
+    const data = filtered.filter(
+      (d) =>
+        d.industry_name === industryMode &&
+        d.housing_cost !== null &&
+        d.workers_per_mil !== null
+    );
 
     // setting up box
     const svg = d3.select(svgRef.current);
