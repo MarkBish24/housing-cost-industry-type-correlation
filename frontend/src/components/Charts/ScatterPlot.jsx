@@ -9,6 +9,7 @@ export default function ScatterPlot({
   height,
 }) {
   const svgRef = useRef();
+  const tooltipRef = useRef();
 
   useEffect(() => {
     if (!industryHousingData) return;
@@ -49,6 +50,8 @@ export default function ScatterPlot({
 
     g.append("g").call(d3.axisLeft(y));
 
+    const tooltip = d3.select(tooltipRef.current);
+
     // Points
     g.selectAll("circle")
       .data(data)
@@ -57,7 +60,40 @@ export default function ScatterPlot({
       .attr("cy", (d) => y(d.workers_per_mil))
       .attr("r", 5)
       .attr("fill", "steelblue")
-      .attr("opacity", 0.7);
+      .attr("opacity", 0.7)
+      .on("mouseover", function (event, d) {
+        d3.select(this)
+          .transition()
+          .duration(100)
+          .ease(d3.easeCubicOut)
+          .attr("fill", "red")
+          .attr("r", 7)
+          .style("cursor", "pointer");
+
+        tooltip.style("opacity", 1).html(
+          `
+          <strong>${d.industry_name}</strong><br/>
+            Year: ${d.year}<br/>
+            Housing Cost: $${d.housing_cost}<br/>
+            Workers: ${d.workers_per_mil} <br/>
+            County: ${d.county_name} <br/>
+          `
+        );
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("left", event.pageX + 15 + "px")
+          .style("top", event.pageY - 30 + "px");
+      })
+      .on("mouseleave", function () {
+        tooltip.style("opacity", 0);
+        d3.select(this)
+          .transition()
+          .duration(100)
+          .ease(d3.easeCubicOut)
+          .attr("fill", "steelblue")
+          .attr("r", 5);
+      });
 
     //Labels
   }, [industryHousingData, industryMode]);
@@ -65,6 +101,12 @@ export default function ScatterPlot({
   return !industryHousingData || !industryMode ? (
     <Loading width={width} height={height} />
   ) : (
-    <svg ref={svgRef} width={width} height={height} />
+    <>
+      <svg ref={svgRef} width={width} height={height} />
+      <div
+        ref={tooltipRef}
+        className="absolute opacity-0  bg-white border border-gray-300 rounded-lg px-2 py-1.5 pointer-events-none text-xs shadow-md"
+      ></div>
+    </>
   );
 }
