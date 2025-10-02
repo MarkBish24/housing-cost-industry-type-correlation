@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import Loading from "../LoadingScreen";
 import * as d3 from "d3";
+import { formatPrice } from "../../utils/format.js";
 
 export default function ScatterPlot({
   industryHousingData,
@@ -79,7 +80,7 @@ export default function ScatterPlot({
           `
           <strong>${d.industry_name}</strong><br/>
             Year: ${d.year}<br/>
-            Housing Cost: $${d.housing_cost}<br/>
+            Housing Cost: ${formatPrice(d.housing_cost)}<br/>
             Workers: ${d.workers_per_mil} <br/>
             County: ${d.county_name} <br/>
           `

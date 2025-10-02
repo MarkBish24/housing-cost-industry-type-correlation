@@ -67,6 +67,7 @@ export default function IndustryBarChart({
       .attr("y", (d) => y(d.workers_per_mil))
       .attr("width", x.bandwidth())
       .attr("height", (d) => innerHeight - y(d.workers_per_mil))
+      .style("cursor", "pointer")
       .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost))
       .on("mouseover", function (event, d) {
         const hoverWidth = x.bandwidth() * 1.1;
@@ -86,7 +87,7 @@ export default function IndustryBarChart({
         tooltip.style("opacity", 1).html(
           `
             <strong>County: ${d.county_name} </strong><br/>
-            Housing Cost: $${d.housing_cost}<br/>
+            Housing Cost: ${formatPrice(d.housing_cost)}<br/>
             Workers: ${d.workers_per_mil} <br/>
           `
         );
