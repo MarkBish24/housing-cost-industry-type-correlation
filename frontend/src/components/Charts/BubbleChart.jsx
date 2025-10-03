@@ -8,31 +8,33 @@ import Loading from "../LoadingScreen";
 export default function BubbleChart({
   year,
   county,
+  industryMode,
   industryHousingData,
   width,
   height,
 }) {
-  const [data, setData] = useState([]);
-
   const svgRef = useRef();
   const tooltipRef = useRef();
 
   useEffect(() => {
-    if (!industryHousingData || !county || !year) return;
+    if (!industryHousingData || !industryMode || !year) return;
 
     let filtered = industryHousingData
       .filter(
         (d) =>
           Number(d.year) === Number(year) &&
-          d.county_name === county &&
-          d.workers_per_million != null &&
-          d.housing_cost != null
+          d.industry_name === industryMode &&
+          d.workers_per_mil !== null &&
+          d.housing_cost !== null
       )
       .map((d) => ({
         ...d,
-        workers_per_million: +d.workers_per_million, // --- Changed: coerce to number
+        county: d.county_name.trim(),
+        workers_per_mil: +d.workers_per_mil, // --- Changed: coerce to number
         housing_cost: +d.housing_cost, // --- Changed: coerce to number
       }));
+
+    console.log(filtered);
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -47,16 +49,20 @@ export default function BubbleChart({
 
     //Scales
     const xScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(filtered, (d) => d.workers_per_million) * 1.1])
-      .range([0, innerWidth]);
+      .scaleBand()
+      .domain(filtered.map((d) => d.county).sort())
+      .range([0, innerWidth])
+      .padding(0.2);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(filtered, (d) => d.housing_cost) * 1.1])
+      .domain([0, d3.max(filtered, (d) => d.workers_per_mil) * 1.1])
       .range([innerHeight, 0]);
 
-    const radius = 8;
+    const size = d3
+      .scaleSqrt()
+      .domain([0, d3.max(filtered, (d) => d.housing_cost)])
+      .range([4, 30]);
 
     //Axes
     g.append("g")
@@ -72,9 +78,9 @@ export default function BubbleChart({
     g.selectAll("circle")
       .data(filtered)
       .join("circle")
-      .attr("cx", (d) => xScale(d.workers_per_million))
-      .attr("cy", (d) => yScale(d.housing_cost))
-      .attr("r", radius)
+      .attr("cx", (d) => xScale(d.county) + xScale.bandwidth() / 2)
+      .attr("cy", (d) => yScale(d.workers_per_mil))
+      .attr("r", (d) => size(d.housing_cost))
       .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost))
       .on("mouseover", (event, d) => {
         tooltip
@@ -91,7 +97,7 @@ export default function BubbleChart({
           .style("top", event.pageY + 10 + "px");
       })
       .on("mouseout", () => tooltip.style("opacity", 0));
-  }, [year, county, industryHousingData]);
+  }, [year, industryHousingData, industryMode]);
   return (
     <div style={{ position: "relative" }}>
       {/* --- Added explicit width/height to SVG */}
