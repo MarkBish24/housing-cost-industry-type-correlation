@@ -34,7 +34,29 @@ export default function BubbleChart({
         housing_cost: +d.housing_cost, // --- Changed: coerce to number
       }));
 
-    console.log(filtered);
+    let civilianData = industryHousingData
+      .filter(
+        (d) =>
+          Number(d.year) === Number(year) &&
+          d.industry_name === "Civilian Employment" &&
+          d.workers_per_mil !== null
+      )
+      .map((d) => ({
+        county: d.county_name.trim(),
+        civilian_workers_per_mil: +d.workers_per_mil,
+      }));
+
+    let merged = filtered.map((d) => {
+      const civilian = civilianData.find((c) => c.county === d.county);
+      return {
+        ...d,
+        civilian_workers_per_mil: civilian
+          ? civilian.civilian_workers_per_mil
+          : null,
+      };
+    });
+
+    console.log("merged", merged);
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -49,20 +71,19 @@ export default function BubbleChart({
 
     //Scales
     const xScale = d3
-      .scaleBand()
-      .domain(filtered.map((d) => d.county).sort())
-      .range([0, innerWidth])
-      .padding(0.2);
+      .scaleLinear()
+      .domain([0, d3.max(merged, (d) => d.civilian_workers_per_mil) * 1.1])
+      .range([0, innerWidth]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(filtered, (d) => d.workers_per_mil) * 1.1])
+      .domain([0, d3.max(merged, (d) => d.workers_per_mil) * 1.1])
       .range([innerHeight, 0]);
 
     const size = d3
       .scaleSqrt()
-      .domain([0, d3.max(filtered, (d) => d.housing_cost)])
-      .range([4, 30]);
+      .domain([0, d3.max(merged, (d) => d.housing_cost)])
+      .range([2, 20]);
 
     //Axes
     g.append("g")
@@ -71,52 +92,51 @@ export default function BubbleChart({
 
     g.append("g").call(d3.axisLeft(yScale));
 
+    g.append("text")
+      .attr("x", innerWidth / 2) // center of the axis
+      .attr("y", innerHeight + 35) // below the chart
+      .attr("text-anchor", "middle") // center align
+      .attr("font-size", "12px")
+      .attr("fill", "black")
+      .text("Counties");
+
     // ToolTip
     const tooltip = d3.select(tooltipRef.current);
 
     // Bubbles
     g.selectAll("circle")
-      .data(filtered)
+      .data(merged)
       .join("circle")
-      .attr("cx", (d) => xScale(d.county) + xScale.bandwidth() / 2)
+      .attr("cx", (d) => xScale(d.civilian_workers_per_mil))
       .attr("cy", (d) => yScale(d.workers_per_mil))
       .attr("r", (d) => size(d.housing_cost))
       .attr("fill", (d) => interpolatedHousingColorScale(d.housing_cost))
+      .attr("opacity", 0.7)
+      .attr("cursor", "pointer")
       .on("mouseover", (event, d) => {
-        tooltip
-          .style("opacity", 1)
-          .html(
-            `${d.industry}<br/>Workers/Million: ${
-              d.workers_per_million
-            }<br/>Housing: ${formatPrice(d.housing_cost)}`
-          );
+        tooltip.style("opacity", 1).html(
+          `<strong>${d.county}</strong><br/>
+            ${d.industry_name}<br/>Workers/Million: ${
+            d.workers_per_mil
+          }<br/>Housing: ${formatPrice(d.housing_cost)}`
+        );
       })
-      .on("mousemove", (event, d) => {
+      .on("mousemove", function (event) {
         tooltip
-          .style("left", event.pageX + 10 + "px")
-          .style("top", event.pageY + 10 + "px");
+          .style("left", event.pageX + 15 + "px")
+          .style("top", event.pageY - 30 + "px");
       })
       .on("mouseout", () => tooltip.style("opacity", 0));
   }, [year, industryHousingData, industryMode]);
   return (
-    <div style={{ position: "relative" }}>
+    <div>
       {/* --- Added explicit width/height to SVG */}
       <svg ref={svgRef} width={width} height={height}></svg>
 
       {/* --- Tooltip styling should be absolute, pointer-events-none */}
       <div
         ref={tooltipRef}
-        className="tooltip"
-        style={{
-          position: "absolute",
-          opacity: 0,
-          pointerEvents: "none",
-          backgroundColor: "white",
-          border: "1px solid #ccc",
-          padding: "5px",
-          borderRadius: "4px",
-          fontSize: "12px",
-        }}
+        className="absolute opacity-0 bg-white border border-gray-300 rounded-lg px-2 py-1.5 pointer-events-none text-xs shadow-md"
       ></div>
     </div>
   );
