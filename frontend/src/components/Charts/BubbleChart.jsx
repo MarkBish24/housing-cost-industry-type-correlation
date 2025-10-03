@@ -72,7 +72,10 @@ export default function BubbleChart({
     //Scales
     const xScale = d3
       .scaleLinear()
-      .domain([0, d3.max(merged, (d) => d.civilian_workers_per_mil) * 1.1])
+      .domain([
+        d3.min(merged, (d) => d.civilian_workers_per_mil) * 0.9,
+        d3.max(merged, (d) => d.civilian_workers_per_mil) * 1.1,
+      ])
       .range([0, innerWidth]);
 
     const yScale = d3
