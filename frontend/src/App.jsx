@@ -9,6 +9,7 @@ import MultiLineChart from "./components/Charts/MultiLineChart.jsx";
 import IndustryBarChart from "./components/Charts/IndustryBarCharts.jsx";
 import ScatterPlot from "./components/Charts/ScatterPlot.jsx";
 import BubbleChart from "./components/Charts/BubbleChart.jsx";
+import BoxPlot from "./components/Charts/BoxPlot.jsx";
 
 function App() {
   // Selections for filtering data
@@ -137,7 +138,7 @@ function renderChart(type, props) {
     case "Bubble Chart":
       return <BubbleChart {...props} />;
     case "Box Plot":
-      return <div>TODO: BoxPlot Component</div>;
+      return <BoxPlot {...props} />;
     case "Violin Plot":
       return <div>TODO: ViolinPlot Component</div>;
     default:

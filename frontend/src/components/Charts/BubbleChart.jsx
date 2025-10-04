@@ -56,8 +56,6 @@ export default function BubbleChart({
       };
     });
 
-    console.log("merged", merged);
-
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
