@@ -91,7 +91,7 @@ export default function BubbleChart({
     //Axes
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale).ticks(6));
 
     g.append("g").call(d3.axisLeft(yScale));
 
@@ -101,7 +101,16 @@ export default function BubbleChart({
       .attr("text-anchor", "middle") // center align
       .attr("font-size", "12px")
       .attr("fill", "black")
-      .text("Counties");
+      .text("Employed Workers per million");
+
+    g.append("text")
+      .attr("x", -innerHeight / 2) // center vertically along Y-axis
+      .attr("y", -50) // offset to the left of the axis
+      .attr("transform", "rotate(-90)") // rotate the text
+      .attr("text-anchor", "middle") // center alignment
+      .attr("font-size", "12px")
+      .attr("fill", "black")
+      .text("Industry Workers per Million");
 
     // ToolTip
     const tooltip = d3.select(tooltipRef.current);
@@ -117,11 +126,20 @@ export default function BubbleChart({
       .attr("opacity", 0.7)
       .attr("cursor", "pointer")
       .on("mouseover", (event, d) => {
+        d3.select(event.currentTarget)
+          .transition()
+          .duration(200)
+          .ease(d3.easeCubicInOut)
+          .attr("opacity", 1)
+          .attr("r", size(d.housing_cost) * 1.25);
+
         tooltip.style("opacity", 1).html(
           `<strong>${d.county}</strong><br/>
-            ${d.industry_name}<br/>Workers/Million: ${
-            d.workers_per_mil
-          }<br/>Housing: ${formatPrice(d.housing_cost)}`
+            ${d.industry_name}
+            Workers/Million: ${d.workers_per_mil}<br/>
+            Housing: ${formatPrice(d.housing_cost)} <br/>
+            Employed Workers/Million ${d.civilian_workers_per_mil}
+            `
         );
       })
       .on("mousemove", function (event) {
@@ -129,7 +147,16 @@ export default function BubbleChart({
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY - 30 + "px");
       })
-      .on("mouseout", () => tooltip.style("opacity", 0));
+      .on("mouseout", (event, d) => {
+        tooltip.style("opacity", 0);
+
+        d3.select(event.currentTarget)
+          .transition()
+          .duration(200)
+          .ease(d3.easeCubicInOut)
+          .attr("opacity", 0.7)
+          .attr("r", size(d.housing_cost));
+      });
   }, [year, industryHousingData, industryMode]);
   return (
     <div>
