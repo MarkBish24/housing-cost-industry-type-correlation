@@ -66,7 +66,7 @@ export default function BoxPlot({
       );
 
       const centerX = xScale(year) + xScale.bandwidth() / 2;
-      const boxWidth = xScale.bandwidth() / 2;
+      const boxWidth = xScale.bandwidth() / 1.5;
 
       g.append("rect")
         .attr("x", centerX - boxWidth / 2)
@@ -74,7 +74,24 @@ export default function BoxPlot({
         .attr("width", boxWidth)
         .attr("height", yScale(q1) - yScale(q3))
         .attr("stroke", "black")
-        .attr("fill", "#69b3a2");
+        .attr("fill", "#69b3a2")
+        .attr("cursor", "pointer")
+        .on("mouseover", (event, d) => {
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(200)
+            .ease(d3.easeCubicInOut)
+            .attr("x", centerX - (boxWidth * 2) / 2)
+            .attr("width", boxWidth * 2);
+        })
+        .on("mouseleave", (event, d) => {
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(200)
+            .ease(d3.easeCubicInOut)
+            .attr("x", centerX - boxWidth / 2)
+            .attr("width", boxWidth);
+        });
 
       g.append("line")
         .attr("x1", centerX - boxWidth / 2)
@@ -97,13 +114,21 @@ export default function BoxPlot({
         .append("circle")
         .attr("cx", centerX)
         .attr("cy", (d) => yScale(d))
-        .attr("r", 3)
+        .attr("r", 2)
         .attr("fill", "red");
     });
 
-    g.append("g")
+    const xAxis = g
+      .append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(xScale));
+
+    xAxis
+      .selectAll("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-45)")
+      .attr("dx", "-0.5em")
+      .attr("dy", "0.25em");
 
     g.append("g").call(d3.axisLeft(yScale));
   }, [housingData, year, industryMode, width, height]);
