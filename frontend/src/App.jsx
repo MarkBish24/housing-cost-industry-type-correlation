@@ -102,6 +102,7 @@ function App() {
               width,
               height,
               year,
+              mode,
             })}
           </div>
           <div>
@@ -119,6 +120,7 @@ function App() {
               width,
               height,
               year,
+              mode,
             })}
           </div>
         </div>

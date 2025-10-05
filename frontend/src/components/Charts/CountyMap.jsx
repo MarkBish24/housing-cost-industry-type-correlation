@@ -2,7 +2,11 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { ZoomOut } from "lucide-react";
 import * as d3 from "d3";
 
-import { formatPrice, interpolatedHousingColorScale } from "../../utils/format";
+import {
+  formatPrice,
+  interpolatedHousingColorScale,
+  interpolatedIndustryColorScale,
+} from "../../utils/format";
 import Loading from "../LoadingScreen";
 
 export default function CountyMap({
@@ -25,34 +29,58 @@ export default function CountyMap({
   const width = 500;
   const height = 600;
 
-  /** Filter housing data for the selected year */
-  const filteredData = useMemo(() => {
-    if (!housingData) return [];
-    return housingData.filter((d) => Number(d.year) === Number(year));
-  }, [housingData, year]);
+  console.log(industryWorkersData);
 
-  /** Merge housing data into geo features */
+  const filteredData = useMemo(() => {
+    if (mode === "cost") {
+      if (!housingData) return [];
+      return housingData.filter((d) => Number(d.year) === Number(year));
+    } else if (mode === "industry") {
+      if (!industryWorkersData) return [];
+      // Filter by selected year and industry
+      return industryWorkersData.filter(
+        (d) =>
+          Number(d.year) === Number(year) &&
+          d.industry_name.toLowerCase() === industryMode.toLowerCase()
+      );
+    }
+    return [];
+  }, [housingData, year, industryWorkersData, mode, industryMode]);
+
+  /** Merge data into geo features */
   const mergedData = useMemo(() => {
     if (!geoData || !filteredData) return null;
 
     return {
       ...geoData,
       features: geoData.features.map((feature) => {
-        const countyName = feature.properties.CountyName;
-        const match = filteredData.find(
-          (d) => d.county_name.toLowerCase() === countyName.toLowerCase()
-        );
+        const countyName = feature.properties.CountyName.toLowerCase();
+        let match = null;
+        let value = null;
+
+        if (mode === "cost") {
+          match = filteredData.find(
+            (d) => d.county_name.toLowerCase() === countyName
+          );
+          value = match ? +d3.format(".0f")(match.housing_cost) : null;
+        } else if (mode === "industry") {
+          match = filteredData.find(
+            (d) => d.county_name.toLowerCase() === countyName
+          );
+          value = match ? +match.workers_per_mil : null;
+        }
 
         return {
           ...feature,
           properties: {
             ...feature.properties,
             ...(match || {}),
+            value,
           },
         };
       }),
     };
-  }, [geoData, filteredData]);
+  }, [geoData, filteredData, mode]);
 
   /** Convert mouse event to local coordinates */
   const toLocal = (event) => {
@@ -109,8 +137,10 @@ export default function CountyMap({
                 .duration(350)
                 .attr("d", path)
                 .attr("fill", (d) =>
-                  d.properties.housing_cost
-                    ? interpolatedHousingColorScale(d.properties.housing_cost)
+                  d.properties.value
+                    ? mode === "cost"
+                      ? interpolatedHousingColorScale(d.properties.value)
+                      : interpolatedIndustryColorScale(d.properties.value)
                     : "lightgray"
                 )
                 .attr("opacity", (d) =>
@@ -123,11 +153,12 @@ export default function CountyMap({
               .transition()
               .duration(350)
               .attr("d", path)
-              .attr("fill", (d) =>
-                d.properties.housing_cost
-                  ? interpolatedHousingColorScale(d.properties.housing_cost)
-                  : "lightgray"
-              )
+              .attr("fill", (d) => {
+                if (!d.properties.value) return "lightgray";
+                return mode === "cost"
+                  ? interpolatedHousingColorScale(d.properties.value)
+                  : interpolatedIndustryColorScale(d.properties.value);
+              })
               .attr("opacity", (d) =>
                 d.properties.county_name === highlightedCounty ? 1 : 0.75
               )
@@ -140,6 +171,9 @@ export default function CountyMap({
         setToolTipData({
           countyName: d.properties.CountyName,
           housingCost: d.properties.housing_cost,
+          year: d.properties.year,
+          fixed: false,
+          value: d.properties.value,
           year: d.properties.year,
           fixed: false,
         });
@@ -183,7 +217,7 @@ export default function CountyMap({
 
             setToolTipData({
               countyName: d.properties.CountyName,
-              housingCost: d.properties.housing_cost,
+              value: d.properties.value,
               year: d.properties.year,
               fixed: true,
             });
@@ -193,7 +227,7 @@ export default function CountyMap({
             }
           });
       });
-  }, [mergedData, year, isFixed, zoomState, highlightedCounty, geoData]);
+  }, [mergedData, year, isFixed, highlightedCounty, geoData]);
 
   if (!mergedData) {
     return <Loading width={width} height={height} />;
@@ -212,10 +246,21 @@ export default function CountyMap({
         >
           <strong>{toolTipData.countyName}</strong>
           <br />
-          Housing Cost:{" "}
-          {toolTipData.housingCost != null
-            ? formatPrice(toolTipData.housingCost)
-            : "N/A"}
+          {mode === "cost" ? (
+            <>
+              Housing Cost:{" "}
+              {toolTipData.value != null
+                ? formatPrice(toolTipData.value)
+                : "N/A"}
+            </>
+          ) : (
+            <>
+              Workers per Million:{" "}
+              {toolTipData.value != null
+                ? toolTipData.value.toLocaleString()
+                : "N/A"}
+            </>
+          )}
           <br />
           Year: {toolTipData.year ?? "N/A"}
         </div>

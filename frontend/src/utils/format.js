@@ -24,6 +24,16 @@ export const getHousingColor = d3
   ]) // green → yellow → orange → red → dark red
   .clamp(true);
 
+export const getIndustryColor = d3
+  .scaleSequential()
+  .domain([0, 250000]) // adjust based on your data range
+  .interpolator(d3.interpolateBlues);
+
+export function interpolatedIndustryColorScale(value) {
+  if (value === null || value === 0) return "#808080"; // gray
+  return getIndustryColor(value);
+}
+
 export function interpolatedHousingColorScale(value) {
   if (value === null || value === 0) return "#808080"; // gray
   return getHousingColor(value);
