@@ -50,8 +50,11 @@ export default function BoxPlot({
       .domain([d3.min(allValues) * 0.95, d3.max(allValues) * 1.05])
       .range([innerHeight, 0]);
 
+    //Tooltip
+    const tooltip = d3.select(tooltipRef.current);
+
     // Calculations
-    dataByYear.forEach(([year, data]) => {
+    dataByYear.forEach(([y, data]) => {
       const values = data.map((d) => +d.housing_cost);
       const q1 = d3.quantile(values, 0.25);
       const median = d3.quantile(values, 0.5);
@@ -61,11 +64,11 @@ export default function BoxPlot({
       const lowerWhisker = d3.max([d3.min(values), q1 - iqr * 1.5]);
       const min = d3.min(values);
       const max = d3.max(values);
-      const outliers = values.filter(
-        (v) => v < lowerWhisker || v > upperWhisker
+      const outliers = data.filter(
+        (d) => d.housing_cost < lowerWhisker || d.housing_cost > upperWhisker
       );
 
-      const centerX = xScale(year) + xScale.bandwidth() / 2;
+      const centerX = xScale(y) + xScale.bandwidth() / 2;
       const boxWidth = xScale.bandwidth() / 1.5;
 
       g.append("rect")
@@ -74,7 +77,7 @@ export default function BoxPlot({
         .attr("width", boxWidth)
         .attr("height", yScale(q1) - yScale(q3))
         .attr("stroke", "black")
-        .attr("fill", "#69b3a2")
+        .attr("fill", y === year ? "#ff7f0e" : "#69b3a2")
         .attr("cursor", "pointer")
         .on("mouseover", (event, d) => {
           d3.select(event.currentTarget)
@@ -83,6 +86,22 @@ export default function BoxPlot({
             .ease(d3.easeCubicInOut)
             .attr("x", centerX - (boxWidth * 2) / 2)
             .attr("width", boxWidth * 2);
+
+          tooltip.style("opacity", 1).html(
+            `<strong>${y}</strong><br/>
+            Quarter 1: ${q1} <br/>
+            Quarter 2: ${median} <br/>
+            Quarter 3:  ${q3} <br/>
+            Inner Quartile Range: ${iqr} <br/>
+            Upper Whisker: ${upperWhisker} <br/>
+            Lower Whisker: ${lowerWhisker} <br/>
+                      `
+          );
+        })
+        .on("mousemove", (event) => {
+          tooltip
+            .style("left", event.pageX + 15 + "px")
+            .style("top", event.pageY - 30 + "px");
         })
         .on("mouseleave", (event, d) => {
           d3.select(event.currentTarget)
@@ -91,6 +110,8 @@ export default function BoxPlot({
             .ease(d3.easeCubicInOut)
             .attr("x", centerX - boxWidth / 2)
             .attr("width", boxWidth);
+
+          tooltip.style("opacity", 0);
         });
 
       g.append("line")
@@ -98,24 +119,56 @@ export default function BoxPlot({
         .attr("x2", centerX + boxWidth / 2)
         .attr("y1", yScale(median))
         .attr("y2", yScale(median))
-        .attr("stroke", "black");
+        .attr("stroke", "black")
+        .style("pointer-events", "none");
 
       g.append("line")
         .attr("x1", centerX)
         .attr("x2", centerX)
         .attr("y1", yScale(lowerWhisker))
         .attr("y2", yScale(upperWhisker))
-        .attr("stroke", "black");
+        .attr("stroke", "black")
+        .style("pointer-events", "none");
 
       g.selectAll("circle.outlier");
-      g.selectAll(`circle.outlier-${year}`)
+      g.selectAll(`circle.outlier-${y}`)
         .data(outliers)
         .enter()
         .append("circle")
         .attr("cx", centerX)
-        .attr("cy", (d) => yScale(d))
-        .attr("r", 2)
-        .attr("fill", "red");
+        .attr("cy", (d) => yScale(d.housing_cost))
+        .attr("r", 3)
+        .attr("fill", "red")
+        .attr("cursor", "pointer")
+        .on("mouseover", (event, d) => {
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(200)
+            .ease(d3.easeCubicInOut)
+            .attr("r", 5);
+
+          console.log(d);
+
+          tooltip.style("opacity", 1).html(
+            `<strong>County: ${d.county_name || "N/A"}</strong><br/>
+            Year: ${y}<br/>
+            Housing Cost: $${(+d.housing_cost).toLocaleString()}`
+          );
+        })
+        .on("mousemove", (event, d) => {
+          tooltip
+            .style("left", event.pageX + 15 + "px")
+            .style("top", event.pageY - 30 + "px");
+        })
+        .on("mouseleave", (event, d) => {
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(200)
+            .ease(d3.easeCubicInOut)
+            .attr("r", 3);
+
+          tooltip.style("opacity", 0);
+        });
     });
 
     const xAxis = g
@@ -136,6 +189,10 @@ export default function BoxPlot({
   return (
     <div>
       <svg ref={svgRef} width={width} height={height}></svg>
+      <div
+        ref={tooltipRef}
+        className="absolute opacity-0 bg-white border border-gray-300 rounded-lg px-2 py-1.5 pointer-events-none text-xs shadow-md"
+      ></div>
     </div>
   );
 }
