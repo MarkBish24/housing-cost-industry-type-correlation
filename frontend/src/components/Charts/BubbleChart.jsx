@@ -156,7 +156,9 @@ export default function BubbleChart({
           .attr("r", size(d.housing_cost));
       });
   }, [year, industryHousingData, industryMode]);
-  return (
+  return !industryHousingData || !industryMode ? (
+    <Loading width={width} height={height} />
+  ) : (
     <div>
       {/* --- Added explicit width/height to SVG */}
       <svg ref={svgRef} width={width} height={height}></svg>

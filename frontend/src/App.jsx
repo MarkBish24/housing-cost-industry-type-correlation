@@ -10,6 +10,7 @@ import IndustryBarChart from "./components/Charts/IndustryBarCharts.jsx";
 import ScatterPlot from "./components/Charts/ScatterPlot.jsx";
 import BubbleChart from "./components/Charts/BubbleChart.jsx";
 import BoxPlot from "./components/Charts/BoxPlot.jsx";
+import ViolinPlot from "./components/Charts/ViolinPlot.jsx";
 
 function App() {
   // Selections for filtering data
@@ -142,7 +143,7 @@ function renderChart(type, props) {
     case "Box Plot":
       return <BoxPlot {...props} />;
     case "Violin Plot":
-      return <div>TODO: ViolinPlot Component</div>;
+      return <ViolinPlot {...props} />;
     default:
       return <Loading width={width} height={height} />;
   }

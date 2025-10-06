@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import * as d3 from "d3";
+import Loading from "../LoadingScreen";
 
 export default function BoxPlot({
   width,
@@ -44,8 +45,6 @@ export default function BoxPlot({
     }
 
     const dataByYear = d3.groups(filteredData, (d) => d.year);
-
-    console.log(dataByYear);
 
     const years = dataByYear.map((d) => d[0]).sort(d3.ascending);
 
@@ -200,7 +199,9 @@ export default function BoxPlot({
     g.append("g").call(d3.axisLeft(yScale));
   }, [mode, industryMode, width, height]);
 
-  return (
+  return !housingData || !industryWorkersData || !industryMode ? (
+    <Loading width={width} height={height} />
+  ) : (
     <div>
       <svg ref={svgRef} width={width} height={height}></svg>
       <div
