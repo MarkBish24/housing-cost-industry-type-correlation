@@ -5,14 +5,16 @@ export default function BoxPlot({
   width,
   height,
   industryMode,
+  mode,
   year,
   housingData,
+  industryWorkersData,
 }) {
   const svgRef = useRef();
   const tooltipRef = useRef();
 
   useEffect(() => {
-    if (!housingData || !year) return;
+    if (!housingData || !year || !industryWorkersData || !industryMode) return;
 
     // Setting Frame
     const svg = d3.select(svgRef.current);
@@ -27,10 +29,23 @@ export default function BoxPlot({
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     //Getting Data by Years
-    const dataByYear = d3.groups(
-      housingData.filter((d) => d.housing_cost !== null),
-      (d) => d.year
-    );
+
+    const isIndustryMode = mode === "industry";
+
+    const activeData = isIndustryMode ? industryWorkersData : housingData;
+    const valueField = isIndustryMode ? "workers_per_mil" : "housing_cost";
+
+    let filteredData = activeData.filter((d) => d[valueField] !== null);
+
+    if (isIndustryMode) {
+      filteredData = filteredData.filter(
+        (d) => d.industry_name === industryMode
+      );
+    }
+
+    const dataByYear = d3.groups(filteredData, (d) => d.year);
+
+    console.log(dataByYear);
 
     const years = dataByYear.map((d) => d[0]).sort(d3.ascending);
 
@@ -41,9 +56,7 @@ export default function BoxPlot({
       .range([0, innerWidth])
       .padding(0.3);
 
-    const allValues = housingData
-      .filter((d) => d.housing_cost !== null)
-      .map((d) => +d.housing_cost);
+    const allValues = filteredData.map((d) => +d[valueField]);
 
     const yScale = d3
       .scaleLinear()
@@ -55,7 +68,7 @@ export default function BoxPlot({
 
     // Calculations
     dataByYear.forEach(([y, data]) => {
-      const values = data.map((d) => +d.housing_cost);
+      const values = data.map((d) => +d[valueField]);
       const q1 = d3.quantile(values, 0.25);
       const median = d3.quantile(values, 0.5);
       const q3 = d3.quantile(values, 0.75);
@@ -65,7 +78,7 @@ export default function BoxPlot({
       const min = d3.min(values);
       const max = d3.max(values);
       const outliers = data.filter(
-        (d) => d.housing_cost < lowerWhisker || d.housing_cost > upperWhisker
+        (d) => d[valueField] < lowerWhisker || d[valueField] > upperWhisker
       );
 
       const centerX = xScale(y) + xScale.bandwidth() / 2;
@@ -136,7 +149,7 @@ export default function BoxPlot({
         .enter()
         .append("circle")
         .attr("cx", centerX)
-        .attr("cy", (d) => yScale(d.housing_cost))
+        .attr("cy", (d) => yScale(+d[valueField]))
         .attr("r", 3)
         .attr("fill", "red")
         .attr("cursor", "pointer")
@@ -152,7 +165,8 @@ export default function BoxPlot({
           tooltip.style("opacity", 1).html(
             `<strong>County: ${d.county_name || "N/A"}</strong><br/>
             Year: ${y}<br/>
-            Housing Cost: $${(+d.housing_cost).toLocaleString()}`
+            ${isIndustryMode ? "Workers" : "Housing Cost"}: 
+            ${(+d[valueField]).toLocaleString()}`
           );
         })
         .on("mousemove", (event, d) => {
@@ -184,7 +198,7 @@ export default function BoxPlot({
       .attr("dy", "0.25em");
 
     g.append("g").call(d3.axisLeft(yScale));
-  }, [housingData, year, industryMode, width, height]);
+  }, [mode, industryMode, width, height]);
 
   return (
     <div>
