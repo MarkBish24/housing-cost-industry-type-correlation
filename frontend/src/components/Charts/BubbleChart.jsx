@@ -93,6 +93,8 @@ export default function BubbleChart({
 
     g.append("g").call(d3.axisLeft(yScale));
 
+    // Labels
+
     g.append("text")
       .attr("x", innerWidth / 2) // center of the axis
       .attr("y", innerHeight + 35) // below the chart

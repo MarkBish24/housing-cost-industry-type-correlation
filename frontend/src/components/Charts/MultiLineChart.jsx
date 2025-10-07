@@ -75,12 +75,14 @@ export default function MultiLineChart({
           .ticks(5)
           .tickFormat((d) => `$${d3.format(",")(d)}`)
       )
+      .attr("font-size", "8px")
       .selectAll("text")
       .attr("fill", "steelblue");
     g.append("g")
       .append("g")
       .attr("transform", `translate(${innerWidth},0)`)
       .call(d3.axisRight(yRight))
+      .attr("font-size", "8px")
       .selectAll("text")
       .attr("fill", "tomato");
 
@@ -109,17 +111,35 @@ export default function MultiLineChart({
       .attr("stroke-width", 2)
       .attr("d", workersLine);
     // Labels
-    svg
-      .append("text")
-      .attr("x", margin.left)
-      .attr("y", margin.top - 10)
-      .text(`Housing Cost in ${county} (left, blue)`);
+    // svg
+    //   .append("text")
+    //   .attr("x", margin.left)
+    //   .attr("y", margin.top - 10)
+    //   .text(`Housing Cost in ${county} (left, blue)`);
 
-    svg
-      .append("text")
-      .attr("x", width - margin.right - 100)
-      .attr("y", margin.top - 10)
-      .text(`Industry Workers - ${industryMode} - per mil  (right, red)`);
+    // svg
+    //   .append("text")
+    //   .attr("x", width - margin.right - 100)
+    //   .attr("y", margin.top - 10)
+    //   .text(`Industry Workers - ${industryMode} - per mil  (right, red)`);
+
+    g.append("text")
+      .attr("x", -innerHeight / 2) // center vertically along Y-axis
+      .attr("y", -50) // offset to the left of the axis
+      .attr("transform", "rotate(-90)") // rotate the text
+      .attr("text-anchor", "middle") // center alignment
+      .attr("font-size", "12px")
+      .attr("fill", "steelblue")
+      .text(`Housing Cost in ${county}`);
+
+    g.append("text")
+      .attr("x", -innerHeight / 2) // center vertically along Y-axis
+      .attr("y", innerWidth + 50) // offset to the left of the axis
+      .attr("transform", "rotate(-90)") // rotate the text
+      .attr("text-anchor", "middle") // center alignment
+      .attr("font-size", "12px")
+      .attr("fill", "tomato")
+      .text(`${industryMode} Workers per million`);
   }, [industryHousingData, industryMode, county, industryMode]);
 
   return !industryHousingData || !industryMode || !county ? (

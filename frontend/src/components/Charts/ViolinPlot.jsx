@@ -71,9 +71,24 @@ export default function ViolinPlot({
 
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale))
+      .selectAll("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-45)")
+      .attr("dx", "-0.5em")
+      .attr("dy", "0.25em");
 
     g.append("g").call(d3.axisLeft(yScale));
+
+    // Labels
+    g.append("text")
+      .attr("x", -innerHeight / 2)
+      .attr("y", -50)
+      .attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle")
+      .attr("font-size", "12px")
+      .attr("fill", "black")
+      .text(isIndustryMode ? "Industry Workers per Million" : "Hounsing Cost");
 
     dataByYear.forEach(([y, data]) => {
       const values = data.map((d) => +d[valueField]);
@@ -132,7 +147,15 @@ export default function ViolinPlot({
           tooltip.style("opacity", 0);
         });
     });
-  }, [housingData, industryWorkersData, industryMode, mode, width, height]);
+  }, [
+    housingData,
+    industryWorkersData,
+    industryMode,
+    mode,
+    width,
+    height,
+    year,
+  ]);
 
   return !housingData || !industryWorkersData || !industryMode ? (
     <Loading width={width} height={height} />

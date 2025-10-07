@@ -197,7 +197,7 @@ export default function BoxPlot({
       .attr("dy", "0.25em");
 
     g.append("g").call(d3.axisLeft(yScale));
-  }, [mode, industryMode, width, height]);
+  }, [mode, industryMode, width, height, year]);
 
   return !housingData || !industryWorkersData || !industryMode ? (
     <Loading width={width} height={height} />
