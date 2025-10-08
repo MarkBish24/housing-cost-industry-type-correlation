@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import Loading from "../LoadingScreen";
+import { formatPrice, formatPopulation } from "../../utils/format.js";
 
 export default function ViolinPlot({
   width,
@@ -95,8 +96,8 @@ export default function ViolinPlot({
       const bandwidth = (d3.max(values) - d3.min(values)) / 20;
       const yTicks = yScale.ticks(40);
       const density = kde(epanechnikov(bandwidth), yTicks, values);
-      const mean = d3.mean(values).toLocaleString();
-      const median = d3.median(values).toLocaleString();
+      const mean = d3.mean(values);
+      const median = d3.median(values);
 
       const centerX = xScale(y) + xScale.bandwidth() / 2;
       const widthScale = d3
@@ -127,8 +128,14 @@ export default function ViolinPlot({
 
           tooltip.style("opacity", 1).html(`
                 <strong>Year:</strong> ${y}<br/>
-                <strong>Mean:</strong> ${mean}<br/>
-                <strong>Median:</strong> ${median}<br/>
+                <strong>Mean:</strong> ${
+                  isIndustryMode ? formatPopulation(+mean) : formatPrice(+mean)
+                }<br/>
+                <strong>Median:</strong> ${
+                  isIndustryMode
+                    ? formatPopulation(Number(median))
+                    : formatPrice(Number(median))
+                }<br/>
                 ${isIndustryMode ? "Workers per million" : "Housing cost"}
             `);
         })

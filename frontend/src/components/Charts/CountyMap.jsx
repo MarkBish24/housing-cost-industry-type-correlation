@@ -4,6 +4,7 @@ import * as d3 from "d3";
 
 import {
   formatPrice,
+  formatPopulation,
   interpolatedHousingColorScale,
   interpolatedIndustryColorScale,
 } from "../../utils/format";
@@ -28,8 +29,6 @@ export default function CountyMap({
 
   const width = 500;
   const height = 600;
-
-  console.log(industryWorkersData);
 
   const filteredData = useMemo(() => {
     if (mode === "cost") {

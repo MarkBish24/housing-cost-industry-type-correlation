@@ -10,6 +10,16 @@ export function formatPrice(value) {
   });
 }
 
+export function formatPopulation(value) {
+  const num = Number(value);
+  if (isNaN(num)) return "N/A";
+
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+}
+
 export const getHousingColor = d3
   .scaleLinear()
   .domain([100000, 250000, 500000, 750000, 1000000, 1500000, 2000000]) // your thresholds

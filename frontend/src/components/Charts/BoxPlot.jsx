@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import * as d3 from "d3";
 import Loading from "../LoadingScreen";
+import { formatPrice, formatPopulation } from "../../utils/format.js";
 
 export default function BoxPlot({
   width,
@@ -99,16 +100,31 @@ export default function BoxPlot({
             .attr("x", centerX - (boxWidth * 2) / 2)
             .attr("width", boxWidth * 2);
 
-          tooltip.style("opacity", 1).html(
-            `<strong>${y}</strong><br/>
-            Quarter 1: ${q1} <br/>
-            Quarter 2: ${median} <br/>
-            Quarter 3:  ${q3} <br/>
-            Inner Quartile Range: ${iqr} <br/>
-            Upper Whisker: ${upperWhisker} <br/>
-            Lower Whisker: ${lowerWhisker} <br/>
-                      `
-          );
+          tooltip.style("opacity", 1).html(`
+            <strong>${y}</strong><br/>
+            Quarter 1: ${
+              isIndustryMode ? formatPopulation(q1) : formatPrice(q1)
+            }<br/>
+            Quarter 2 (Median): ${
+              isIndustryMode ? formatPopulation(median) : formatPrice(median)
+            }<br/>
+            Quarter 3: ${
+              isIndustryMode ? formatPopulation(q3) : formatPrice(q3)
+            }<br/>
+            Interquartile Range: ${
+              isIndustryMode ? formatPopulation(iqr) : formatPrice(iqr)
+            }<br/>
+            Upper Whisker: ${
+              isIndustryMode
+                ? formatPopulation(upperWhisker)
+                : formatPrice(upperWhisker)
+            }<br/>
+            Lower Whisker: ${
+              isIndustryMode
+                ? formatPopulation(lowerWhisker)
+                : formatPrice(lowerWhisker)
+            }
+`);
         })
         .on("mousemove", (event) => {
           tooltip
@@ -164,8 +180,12 @@ export default function BoxPlot({
           tooltip.style("opacity", 1).html(
             `<strong>County: ${d.county_name || "N/A"}</strong><br/>
             Year: ${y}<br/>
-            ${isIndustryMode ? "Workers" : "Housing Cost"}: 
-            ${(+d[valueField]).toLocaleString()}`
+            ${
+              isIndustryMode
+                ? `Workers: ${formatPopulation(+d[valueField])}`
+                : `Housing Cost: ${formatPrice(+d[valueField])}`
+            } 
+            `
           );
         })
         .on("mousemove", (event, d) => {

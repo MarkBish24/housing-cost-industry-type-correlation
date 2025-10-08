@@ -2,7 +2,11 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { ZoomOut } from "lucide-react";
 import * as d3 from "d3";
 
-import { formatPrice, interpolatedHousingColorScale } from "../../utils/format";
+import {
+  formatPrice,
+  formatPopulation,
+  interpolatedHousingColorScale,
+} from "../../utils/format";
 import Loading from "../LoadingScreen";
 
 export default function BubbleChart({
@@ -136,9 +140,11 @@ export default function BubbleChart({
         tooltip.style("opacity", 1).html(
           `<strong>${d.county}</strong><br/>
             ${d.industry_name}
-            Workers/Million: ${d.workers_per_mil}<br/>
+            Workers/Million: ${formatPopulation(d.workers_per_mil)}<br/>
             Housing: ${formatPrice(d.housing_cost)} <br/>
-            Employed Workers/Million ${d.civilian_workers_per_mil}
+            Employed Workers/Million ${formatPopulation(
+              d.civilian_workers_per_mil
+            )}
             `
         );
       })

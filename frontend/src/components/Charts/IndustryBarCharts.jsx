@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import Loading from "../LoadingScreen";
 import {
   formatPrice,
+  formatPopulation,
   interpolatedHousingColorScale,
 } from "../../utils/format.js";
 
@@ -88,7 +89,7 @@ export default function IndustryBarChart({
           `
             <strong>County: ${d.county_name} </strong><br/>
             Housing Cost: ${formatPrice(d.housing_cost)}<br/>
-            Workers: ${d.workers_per_mil} <br/>
+            Workers: ${formatPopulation(d.workers_per_mil)} <br/>
           `
         );
       })
