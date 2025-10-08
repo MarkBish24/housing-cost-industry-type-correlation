@@ -84,6 +84,23 @@ export default function BoxPlot({
       const centerX = xScale(y) + xScale.bandwidth() / 2;
       const boxWidth = xScale.bandwidth() / 1.5;
 
+      // Labels
+
+      g.append("text")
+        .attr("x", -innerHeight / 2) // center vertically along Y-axis
+        .attr("y", -50) // offset to the left of the axis
+        .attr("transform", "rotate(-90)") // rotate the text
+        .attr("text-anchor", "middle") // center alignment
+        .attr("font-size", "12px")
+        .attr("fill", "black")
+        .text(
+          `${
+            industryMode
+              ? "Industry Workers per Million"
+              : "Median Housing Cost"
+          }`
+        );
+
       g.append("rect")
         .attr("x", centerX - boxWidth / 2)
         .attr("y", yScale(q3))
@@ -124,7 +141,7 @@ export default function BoxPlot({
                 ? formatPopulation(lowerWhisker)
                 : formatPrice(lowerWhisker)
             }
-`);
+          `);
         })
         .on("mousemove", (event) => {
           tooltip

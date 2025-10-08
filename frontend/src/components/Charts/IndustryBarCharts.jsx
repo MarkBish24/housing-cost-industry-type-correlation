@@ -123,6 +123,25 @@ export default function IndustryBarChart({
       );
 
     g.append("g").call(d3.axisLeft(y));
+
+    // Labels
+
+    g.append("text")
+      .attr("x", innerWidth / 2) // center of the axis
+      .attr("y", innerHeight + 35) // below the chart
+      .attr("text-anchor", "middle") // center align
+      .attr("font-size", "12px")
+      .attr("fill", "black")
+      .text("Counties");
+
+    g.append("text")
+      .attr("x", -innerHeight / 2) // center vertically along Y-axis
+      .attr("y", -50) // offset to the left of the axis
+      .attr("transform", "rotate(-90)") // rotate the text
+      .attr("text-anchor", "middle") // center alignment
+      .attr("font-size", "12px")
+      .attr("fill", "black")
+      .text("Industry Workers per Million");
   }, [industryHousingData, year, industryMode]);
 
   return !industryHousingData ? (
