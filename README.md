@@ -33,6 +33,10 @@
   This flexibility allows for a truly interactive and personalized data analysis experience.
 </p>
 
+<p align="center">
+  <img src="assets/Housing-Cost-gif.gif" alt="Dashboard Demo GIF" width="600"/>
+</p>
+
 
 
 
