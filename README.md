@@ -135,7 +135,6 @@
 </p>
 
 
-
 ## Feature 3 - Bar Chart
 
 
@@ -155,4 +154,17 @@
 
 
 ## Technologies
+
+### Languages
+JavaScript
+
+### Frameworks / Runtimes
+React (with Vite) - Electron
+
+### Database
+PostgreSQL (SQL)
+
+### Developer Tools
+Git - VSCode
+
 
