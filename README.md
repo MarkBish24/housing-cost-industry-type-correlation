@@ -99,15 +99,36 @@
 
 
 
-
-
-
-
-
-
-
-
 ## Feature 2 - County Map
+
+<p align="center">
+  Below is the <strong>County Map</strong>, which displays a heat map of each California county 
+  based on either <strong>median housing cost</strong> or <strong>industry type per million</strong>. 
+  You can switch between these views by selecting the desired mode from the menu at the top. 
+  The map supports interactive features — you can <strong>click</strong> to zoom in on specific counties, 
+  and their details will appear in the top-left corner. 
+  You can also <strong>hover</strong> over a county to quickly view its information.
+</p>
+
+### Housing Map
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-10.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+### Industry Map (Manufacturing)
+<p align="center">
+  <img src="assets/Housing-Cost-Img-11.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-12.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-13.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
 
 
 ## Feature 3 - Bar Chart
