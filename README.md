@@ -37,10 +37,74 @@
   <img src="assets/Housing-Cost-gif.gif" alt="Dashboard Demo GIF" width="600"/>
 </p>
 
-
-
-
 ## Feature 1 - Dashboard Menu
+
+<p align="center">
+  At the top of the dashboard is the <strong>selection menu</strong>, 
+  where users can choose which features or data visualizations to display. 
+  Depending on the selected chart type, the displayed data automatically 
+  updates and adjusts <strong>dynamically</strong> to reflect those choices.
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-02.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  Below is the <strong>mode selection menu</strong>, which allows users to switch between 
+  <strong>Housing Mode</strong> and <strong>Industry Mode</strong>. 
+  This feature dynamically updates visualizations such as the <strong>County Map</strong>, 
+  <strong>Box Plot</strong>, and <strong>Violin Chart</strong> based on the selected mode.
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-04.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  The <strong>scroll wheel</strong> controls the <strong>year of data</strong> displayed, 
+  allowing users to explore information from <strong>2010 to 2024</strong>. 
+  Adjusting the year dynamically updates visualizations such as the 
+  <strong>County Map</strong>, <strong>Bar Chart</strong>, and <strong>Bubble Chart</strong>.
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-05.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-06.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  Finally, in the <strong>header menu</strong> is the <strong>Industry Selection</strong> dropdown. 
+  Some charts require an industry type to be selected in order to display data — 
+  otherwise, no visualization will appear. 
+  To activate this dropdown, make sure <strong>Industry Mode</strong> is enabled.
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-07.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+<p align="center">
+  Below are two mini <strong>selection menus</strong> that allow you to choose which charts you want to view. 
+  Keep in mind that you cannot select the same chart twice (e.g., two <strong>Box Plots</strong>). 
+  The charts must be <strong>different</strong> to be displayed simultaneously.
+</p>
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-03.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+
+
+
+
+
+
+
+
 
 
 ## Feature 2 - County Map
