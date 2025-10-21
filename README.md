@@ -110,13 +110,18 @@
   You can also <strong>hover</strong> over a county to quickly view its information.
 </p>
 
-### Housing Map
+<p align="center">
+  <strong>Housing Map</strong>
+</p>
 
 <p align="center">
   <img src="assets/Housing-Cost-Img-10.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
 </p>
 
-### Industry Map (Manufacturing)
+<p align="center">
+  <strong>Industry Map (Manufacturing)</strong>
+</p>
+
 <p align="center">
   <img src="assets/Housing-Cost-Img-11.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
 </p>
