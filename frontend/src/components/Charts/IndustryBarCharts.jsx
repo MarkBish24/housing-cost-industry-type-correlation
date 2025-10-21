@@ -18,7 +18,7 @@ export default function IndustryBarChart({
   const tooltipRef = useRef();
 
   useEffect(() => {
-    if (!industryHousingData) return;
+    if (!industryHousingData || !industryMode) return;
 
     let filtered = industryHousingData;
 
@@ -144,7 +144,7 @@ export default function IndustryBarChart({
       .text("Industry Workers per Million");
   }, [industryHousingData, year, industryMode]);
 
-  return !industryHousingData ? (
+  return !industryHousingData || !industryMode ? (
     <Loading width={width} height={height} />
   ) : (
     <>
