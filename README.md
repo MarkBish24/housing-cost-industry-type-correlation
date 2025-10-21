@@ -138,6 +138,14 @@
 ## Feature 3 - Bar Chart
 
 <p align="center">
+  This chart displays the <strong>top 10 counties</strong> ranked by their respective industry values. 
+  For example, in the chart below, you can see the <strong>top 10 counties</strong> with the highest number of 
+  <strong>Manufacturing workers</strong> for the selected year 
+  (the year can be adjusted using the <strong>scroll wheel</strong> in the header above). 
+  The <strong>color</strong> of each bar represents the <strong>median housing cost</strong> for that year.
+</p>
+
+<p align="center">
   <img src="assets/Housing-Cost-Img-08.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
 </p>
 
@@ -145,10 +153,22 @@
 ## Feature 4 - Multi-Line Chart
 
 <p align="center">
+  The <strong>Multi-Line Chart</strong> illustrates how <strong>housing costs</strong> 
+  and <strong>industry employment</strong> have changed over time for a selected county. 
+  For example, the chart below shows data for <strong>Sonoma County</strong> in the <strong>Manufacturing</strong> industry.
+</p>
+
+<p align="center">
   <img src="assets/Housing-Cost-Img-09.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
 </p>
 
 ## Feature 5 - Scatter Plot
+
+<p align="center">
+  The <strong>Scatter Plot</strong> displays all data points across the years for a selected industry. 
+  It includes information from <strong>all California counties</strong> throughout their respective time periods. 
+  The example below shows data for the <strong>Professional and Business Services</strong> industry.
+</p>
 
 <p align="center">
   <img src="assets/Housing-Cost-Img-14.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
@@ -158,12 +178,23 @@
 ## Feature 6 - Bubble Chart
 
 <p align="center">
+  The <strong>Bubble Chart</strong> visualizes data for each individual county within a selected year. 
+  The <strong>color</strong> of each bubble represents the <strong>median housing cost</strong>, 
+  the <strong>y-axis</strong> indicates the <strong>industry count per million</strong>, 
+  and the <strong>x-axis</strong> shows the <strong>number of employed workers per million</strong>. 
+  The example below displays data for the <strong>Professional and Business Services</strong> industry in the year <strong>2024</strong>.
+</p>
+
+<p align="center">
   <img src="assets/Housing-Cost-Img-15.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
 </p>
 
 
 ## Feature 7 - Box Plot
 
+<p align="center">
+  Words
+</p>
 
 <p align="center">
   <img src="assets/Housing-Cost-Img-16.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
@@ -171,6 +202,10 @@
 
 
 ## Feature 8 - Violin Chart
+
+<p align="center">
+  Words
+</p>
 
 <p align="center">
   <img src="assets/Housing-Cost-Img-17.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
