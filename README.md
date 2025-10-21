@@ -137,20 +137,44 @@
 
 ## Feature 3 - Bar Chart
 
+<p align="center">
+  <img src="assets/Housing-Cost-Img-08.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
 
 ## Feature 4 - Multi-Line Chart
 
+<p align="center">
+  <img src="assets/Housing-Cost-Img-09.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
 
 ## Feature 5 - Scatter Plot
 
+<p align="center">
+  <img src="assets/Housing-Cost-Img-14.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
 
 ## Feature 6 - Bubble Chart
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-15.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
 
 
 ## Feature 7 - Box Plot
 
 
+<p align="center">
+  <img src="assets/Housing-Cost-Img-16.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
+
+
 ## Feature 8 - Violin Chart
+
+<p align="center">
+  <img src="assets/Housing-Cost-Img-17.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
+</p>
 
 
 ## Technologies
