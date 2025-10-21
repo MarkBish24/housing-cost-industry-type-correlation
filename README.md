@@ -193,8 +193,11 @@
 ## Feature 7 - Box Plot
 
 <p align="center">
-  Words
+  The <strong>Box Plot</strong> displays the distribution of data over the years for either <strong>median housing cost</strong> or a selected <strong>industry type</strong>. 
+  The <strong>orange box</strong> highlights the year currently selected using the scroll wheel. 
+  The example below shows <strong>median housing costs</strong> from <strong>2000 to 2024</strong>.
 </p>
+
 
 <p align="center">
   <img src="assets/Housing-Cost-Img-16.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
@@ -204,8 +207,11 @@
 ## Feature 8 - Violin Chart
 
 <p align="center">
-  Words
+  The <strong>Violin Chart</strong> combines a <strong>box plot</strong> with a <strong>density plot</strong> to show both the distribution and probability density of data over the years for either <strong>median housing cost</strong> or a selected <strong>industry type</strong>. 
+  The <strong>highlighted section</strong> corresponds to the year currently selected using the scroll wheel. 
+  The example below visualizes <strong>median housing costs</strong> from <strong>2000 to 2024</strong>.
 </p>
+
 
 <p align="center">
   <img src="assets/Housing-Cost-Img-17.png" alt="Housing Cost Dashboard Screenshot" width="600"/>
